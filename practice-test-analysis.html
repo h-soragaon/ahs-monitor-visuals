@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AP Practice Test Analysis</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#e0e0e0;padding:20px}
+h1{font-size:1.4rem;color:#fff;margin-bottom:4px}
+.sub{color:#888;font-size:.85rem;margin-bottom:20px}
+.stats{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.stat{background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:12px 16px;min-width:110px}
+.stat .v{font-size:1.5rem;font-weight:700;color:#60a5fa}
+.stat .l{font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.tabs{display:flex;gap:4px;margin-bottom:12px}
+.tab{padding:6px 14px;background:#1a1a2e;border:1px solid #333;border-radius:6px;cursor:pointer;font-size:.8rem;color:#aaa}
+.tab.active{background:#2563eb;color:#fff;border-color:#2563eb}
+.vw{display:none}.vw.active{display:block}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{background:#1a1a2e;color:#aaa;font-weight:600;text-align:left;padding:6px 8px;position:sticky;top:0;border-bottom:2px solid #333}
+td{padding:5px 8px;border-bottom:1px solid #1a1a2e}
+tr:hover{background:#1a1a2e}
+.s1{color:#ef4444}.s2{color:#f97316}.s3{color:#eab308}.s4{color:#22c55e}.s5{color:#10b981;font-weight:700}
+.hm{width:100%;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;cursor:default}
+.h0{background:#1a1a2e;color:#444}.h1{background:#1e3a5f;color:#60a5fa}.h2{background:#1e4d3a;color:#34d399}.h3{background:#3b1e5f;color:#a78bfa}
+.bar{height:16px;border-radius:3px;display:inline-block;min-width:2px}
+.bm{background:#3b82f6}.bp{background:#8b5cf6}.bg{background:#10b981}
+.sv{color:#22c55e}.sp{color:#eab308}.si{color:#ef4444}
+.recent{background:#0f1a0f !important}
+.filter{padding:4px 8px;background:#1a1a2e;border:1px solid #333;border-radius:4px;color:#e0e0e0;font-size:.8rem;margin-bottom:8px;width:300px}
+.exam-tag{display:inline-block;background:#1a1a2e;border:1px solid #333;border-radius:4px;padding:2px 6px;font-size:.65rem;margin:1px}
+</style>
+</head>
+<body>
+<h1>AP Practice Test Analysis</h1>
+<p class="sub">Data as of Apr 17, 2026 | 17 days until AP exams start (May 4)</p>
+
+<div class="stats" id="stats"></div>
+<div class="tabs" id="tabbar"></div>
+<div id="completions" class="vw active"></div>
+<div id="students" class="vw"></div>
+<div id="heatmap" class="vw"></div>
+<div id="inventory" class="vw"></div>
+<div id="timeline" class="vw"></div>
+<div id="scores" class="vw"></div>
+
+<script>
+const D={"c":[{"s":"Paty Margain-Junco","sid":"001-0444","t":"AP US History - Midterm Practice Exam","e":"AP US History","d":"2026-02-17","st":"valid","mc":"44","mt":"55","mp":0.8,"fe":"17","fp":"22","ap":"5"},{"s":"Michael Cai","sid":"001-0638","t":"AP World History - Midterm Practice Exam","e":"AP World History","d":"2026-02-18","st":"valid","mc":"44","mt":"55","mp":0.8,"fe":"19","fp":"22","ap":"5"},{"s":"Adrienne Laswell","sid":"001-0447","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-19","st":"invalid","mc":"2","mt":"2","mp":1.0,"fe":"","fp":"","ap":""},{"s":"Ali Romman","sid":"001-0070","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-19","st":"invalid","mc":"4","mt":"4","mp":1.0,"fe":"","fp":"","ap":""},{"s":"Austin Lin","sid":"001-2515","t":"AP Human Geography - Final Exam","e":"AP Human Geography","d":"2026-02-19","st":"invalid","mc":"2","mt":"3","mp":0.7,"fe":"","fp":"","ap":""},{"s":"Benny Valles","sid":"001-0749","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-19","st":"invalid","mc":"2","mt":"2","mp":1.0,"fe":"","fp":"","ap":""},{"s":"Branson Pfiester","sid":"001-0522","t":"AP Human Geography - Final Exam","e":"AP Human Geography","d":"2026-02-19","st":"invalid","mc":"4","mt":"7","mp":0.6,"fe":"","fp":"","ap":""},{"s":"Caleb Walker","sid":"001-0580","t":"AP Environmental Science - Final Exam","e":"AP Environmental Science","d":"2026-02-19","st":"invalid","mc":"10","mt":"12","mp":0.8,"fe":"","fp":"","ap":""},{"s":"Ella Dietz","sid":"001-0823","t":"AP World History - Final Exam","e":"AP World History","d":"2026-02-19","st":"invalid","mc":"1","mt":"2","mp":0.5,"fe":"","fp":"","ap":""},{"s":"Emma Cotner","sid":"001-0162","t":"AP World History - Final Exam","e":"AP World History","d":"2026-02-19","st":"invalid","mc":"0","mt":"1","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Erika Rigby","sid":"001-1234","t":"AP Human Geography - Final Exam","e":"AP Human Geography","d":"2026-02-19","st":"invalid","mc":"1","mt":"2","mp":0.5,"fe":"","fp":"","ap":""},{"s":"Gus Castillo","sid":"001-0388","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-19","st":"invalid","mc":"1","mt":"2","mp":0.5,"fe":"","fp":"","ap":""},{"s":"Jackson Price","sid":"001-0269","t":"AP World History - Final Exam","e":"AP World History","d":"2026-02-19","st":"invalid","mc":"1","mt":"2","mp":0.5,"fe":"","fp":"","ap":""},{"s":"Jacob Kuchinsky","sid":"001-0196","t":"AP Human Geography - Final Exam","e":"AP Human Geography","d":"2026-02-19","st":"invalid","mc":"6","mt":"7","mp":0.9,"fe":"","fp":"","ap":""},{"s":"Jeremy Wang","sid":"001-2458","t":"AP English Language and Composition - Final Exam","e":"AP English Language and Composition","d":"2026-02-19","st":"invalid","mc":"3","mt":"3","mp":1.0,"fe":"","fp":"","ap":""},{"s":"Jessica Owenby","sid":"001-8774","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-19","st":"invalid","mc":"7","mt":"7","mp":1.0,"fe":"","fp":"","ap":""},{"s":"Luca Sanchez","sid":"015-2895","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-19","st":"valid","mc":"34","mt":"60","mp":0.6,"fe":"17.3","fp":"21","ap":"5"},{"s":"Saeed Tarawneh","sid":"001-4370","t":"AP World History - Final Exam","e":"AP World History","d":"2026-02-19","st":"invalid","mc":"0","mt":"2","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Sara Beth Way","sid":"001-0129","t":"AP English Language and Composition - Final Exam","e":"AP English Language and Composition","d":"2026-02-19","st":"invalid","mc":"3","mt":"3","mp":1.0,"fe":"","fp":"","ap":""},{"s":"Stella Cole","sid":"001-0956","t":"AP World History - Midterm Practice Exam","e":"AP World History","d":"2026-02-19","st":"invalid","mc":"1","mt":"2","mp":0.5,"fe":"","fp":"","ap":""},{"s":"Stella Grams","sid":"001-1253","t":"AP World History - Final Exam","e":"AP World History","d":"2026-02-19","st":"invalid","mc":"0","mt":"1","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Sydney Barba","sid":"015-0734","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-19","st":"valid","mc":"39","mt":"60","mp":0.7,"fe":"9","fp":"21","ap":"3"},{"s":"Vera Li","sid":"001-2478","t":"AP Human Geography - Final Exam","e":"AP Human Geography","d":"2026-02-19","st":"invalid","mc":"1","mt":"1","mp":1.0,"fe":"","fp":"","ap":""},{"s":"Zayen Szpitalak","sid":"001-0843","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-19","st":"invalid","mc":"2","mt":"2","mp":1.0,"fe":"","fp":"","ap":""},{"s":"Austin Lin","sid":"001-2515","t":"AP Human Geography - Final","e":"AP Human Geography","d":"2026-02-19","st":"valid","mc":"45","mt":"60","mp":0.8,"fe":"14","fp":"21","ap":"4"},{"s":"Cruce Saunders IV","sid":"001-0679","t":"AP US History - Final","e":"AP US History","d":"2026-02-19","st":"valid","mc":"18","mt":"55","mp":0.3,"fe":"14","fp":"22","ap":""},{"s":"Adrienne Laswell","sid":"001-0447","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-20","st":"valid","mc":"46","mt":"60","mp":0.8,"fe":"13","fp":"21","ap":"4"},{"s":"Aidan Wong","sid":"050-4719","t":"AP English Language - Midterm Practice Exam","e":"AP English Language and Composition","d":"2026-02-20","st":"valid","mc":"34","mt":"45","mp":0.8,"fe":"17","fp":"18","ap":"5"},{"s":"Ali Romman","sid":"001-0070","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-20","st":"valid","mc":"41","mt":"60","mp":0.7,"fe":"18","fp":"21","ap":"5"},{"s":"Ananya Kakarlapudi","sid":"001-8749","t":"AP Psychology - Midterm Practice Exam","e":"AP Psychology","d":"2026-02-20","st":"valid","mc":"79","mt":"100","mp":0.8,"fe":"13","fp":"14","ap":"5"},{"s":"Austin Way","sid":"001-0175","t":"AP US History - Midterm Practice Exam","e":"AP US History","d":"2026-02-20","st":"valid","mc":"35","mt":"55","mp":0.6,"fe":"12","fp":"16","ap":""},{"s":"Benny Valles","sid":"001-0749","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-20","st":"valid","mc":"40","mt":"60","mp":0.7,"fe":"21","fp":"21","ap":"5"},{"s":"Caleb Walker","sid":"001-0580","t":"AP Environmental Science - Final Exam","e":"AP Environmental Science","d":"2026-02-20","st":"valid","mc":"58","mt":"80","mp":0.7,"fe":"18","fp":"30","ap":"4"},{"s":"Emily Smith","sid":"001-0730","t":"AP US Government and Politics - Final Practice Exam","e":"AP US Government and Politics","d":"2026-02-20","st":"valid","mc":"48","mt":"55","mp":0.9,"fe":"17","fp":"17","ap":"5"},{"s":"Evan Klein","sid":"001-2546","t":"AP Computer Science A - Midterm Practice Exam","e":"AP Computer Science A","d":"2026-02-20","st":"valid","mc":"37","mt":"40","mp":0.9,"fe":"32.4","fp":"36","ap":"5"},{"s":"Grady Swanson","sid":"001-0728","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-20","st":"valid","mc":"42","mt":"60","mp":0.7,"fe":"11","fp":"21","ap":"4"},{"s":"Gus Castillo","sid":"001-0388","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-20","st":"valid","mc":"29","mt":"60","mp":0.5,"fe":"10","fp":"21","ap":"2"},{"s":"Jessica Owenby","sid":"001-8774","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-20","st":"valid","mc":"42","mt":"60","mp":0.7,"fe":"14","fp":"21","ap":"4"},{"s":"Maddie Price","sid":"001-0046","t":"AP US Government and Politics - Midterm Practice Exam","e":"AP US Government and Politics","d":"2026-02-20","st":"invalid","mc":"0","mt":"1","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Madeleine Grams","sid":"001-1254","t":"AP English Language - Final Practice Exam","e":"AP English Language and Composition","d":"2026-02-20","st":"valid","mc":"19","mt":"45","mp":0.4,"fe":"12","fp":"18","ap":"2"},{"s":"Sara Beth Way","sid":"001-0129","t":"AP English Language - Final Practice Exam","e":"AP English Language and Composition","d":"2026-02-20","st":"valid","mc":"16","mt":"45","mp":0.4,"fe":"10","fp":"18","ap":"2"},{"s":"Sloka Vudumu","sid":"001-2404","t":"AP Chemistry - Final Exam","e":"AP Chemistry","d":"2026-02-20","st":"valid","mc":"41","mt":"50","mp":0.8,"fe":"21","fp":"46","ap":"4"},{"s":"Stella Cole","sid":"001-0956","t":"AP World History - Midterm Practice Exam","e":"AP World History","d":"2026-02-20","st":"valid","mc":"35","mt":"55","mp":0.6,"fe":"13","fp":"22","ap":"3"},{"s":"Zayen Szpitalak","sid":"001-0843","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-02-20","st":"valid","mc":"41","mt":"60","mp":0.7,"fe":"9","fp":"21","ap":"3"},{"s":"Aheli Shah","sid":"001-0866","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-03-03","st":"valid","mc":"35","mt":"60","mp":0.6,"fe":"10","fp":"21","ap":"3"},{"s":"Boris Dudarev","sid":"015-4429","t":"AP Human Geography - Midterm Practice Exam","e":"AP Human Geography","d":"2026-03-03","st":"valid","mc":"34","mt":"60","mp":0.6,"fe":"9","fp":"21","ap":"3"},{"s":"Ella Gremont","sid":"001-0839","t":"AP English Language - Final Practice Exam","e":"AP English Language and Composition","d":"2026-03-03","st":"valid","mc":"20","mt":"45","mp":0.4,"fe":"15","fp":"18","ap":"3"},{"s":"Erika Rigby","sid":"001-1234","t":"AP Human Geography - Final Exam","e":"AP Human Geography","d":"2026-03-03","st":"valid","mc":"38","mt":"60","mp":0.6,"fe":"14","fp":"21","ap":"4"},{"s":"Geetesh Parelly","sid":"001-2133","t":"AP English Language - Final Practice Exam","e":"AP English Language and Composition","d":"2026-03-03","st":"valid","mc":"16","mt":"45","mp":0.4,"fe":"13","fp":"18","ap":"2"},{"s":"Jacob Kuchinsky","sid":"001-0196","t":"AP Human Geography - Final Exam","e":"AP Human Geography","d":"2026-03-03","st":"valid","mc":"44","mt":"60","mp":0.7,"fe":"17","fp":"21","ap":"5"},{"s":"Jeremy Wang","sid":"001-2458","t":"AP English Language - Final Practice Exam","e":"AP English Language and Composition","d":"2026-03-03","st":"valid","mc":"19","mt":"45","mp":0.4,"fe":"13","fp":"18","ap":"3"},{"s":"Kavin Lingham","sid":"001-0857","t":"AP World History - Final Practice Exam","e":"AP World History","d":"2026-03-03","st":"valid","mc":"38","mt":"55","mp":0.7,"fe":"14","fp":"22","ap":"4"},{"s":"Vera Li","sid":"001-2478","t":"AP Human Geography - Final Exam","e":"AP Human Geography","d":"2026-03-03","st":"valid","mc":"43","mt":"60","mp":0.7,"fe":"15","fp":"21","ap":"5"},{"s":"Cruce Saunders IV","sid":"001-0679","t":"AP Physics 1 - Midterm Practice Exam","e":"AP Physics 1","d":"2026-03-20","st":"valid","mc":"28","mt":"50","mp":0.6,"fe":"","fp":"","ap":""},{"s":"Ella Dietz","sid":"001-0823","t":"AP Chemistry - Midterm Practice Exam","e":"AP Chemistry","d":"2026-03-20","st":"valid","mc":"12","mt":"60","mp":0.2,"fe":"","fp":"","ap":""},{"s":"Ella Gremont","sid":"001-0839","t":"AP Chemistry - Midterm Practice Exam","e":"AP Chemistry","d":"2026-03-20","st":"valid","mc":"17","mt":"60","mp":0.3,"fe":"","fp":"","ap":""},{"s":"Emma Cotner","sid":"001-0162","t":"AP Biology - Midterm Practice Exam","e":"AP Biology","d":"2026-03-20","st":"valid","mc":"33","mt":"60","mp":0.6,"fe":"6","fp":"36","ap":"2"},{"s":"Jeremy Wang","sid":"001-2458","t":"AP Physics 1 - Final Exam","e":"AP Physics 1","d":"2026-03-20","st":"valid","mc":"32","mt":"40","mp":0.8,"fe":"","fp":"","ap":""},{"s":"Paty Margain-Junco","sid":"001-0444","t":"AP Chemistry - Midterm Practice Exam","e":"AP Chemistry","d":"2026-03-20","st":"valid","mc":"30","mt":"60","mp":0.5,"fe":"","fp":"","ap":""},{"s":"Vera Li","sid":"001-2478","t":"AP Biology - Midterm Practice Exam","e":"AP Biology","d":"2026-03-20","st":"valid","mc":"35","mt":"60","mp":0.6,"fe":"13","fp":"36","ap":"2"},{"s":"Austin Lin","sid":"001-2515","t":"AP Biology - Midterm Practice Exam","e":"AP Biology","d":"2026-03-23","st":"valid","mc":"31","mt":"60","mp":0.5,"fe":"","fp":"","ap":""},{"s":"Austin Way","sid":"001-0175","t":"AP Physics 1 - Final Exam","e":"AP Physics 1","d":"2026-03-23","st":"valid","mc":"21","mt":"40","mp":0.5,"fe":"","fp":"","ap":""},{"s":"Geetesh Parelly","sid":"001-2133","t":"AP Chemistry - Midterm Practice Exam","e":"AP Chemistry","d":"2026-03-23","st":"valid","mc":"36","mt":"60","mp":0.6,"fe":"10.8","fp":"46","ap":""},{"s":"Grady Swanson","sid":"001-0728","t":"AP Biology - Midterm Practice Exam","e":"AP Biology","d":"2026-03-23","st":"valid","mc":"32","mt":"60","mp":0.5,"fe":"4.6","fp":"36","ap":"2"},{"s":"Jackson Price","sid":"001-0269","t":"AP Physics 1 - Final Exam","e":"AP Physics 1","d":"2026-03-23","st":"valid","mc":"25","mt":"40","mp":0.6,"fe":"","fp":"","ap":""},{"s":"Michael Cai","sid":"001-0638","t":"AP Biology - Midterm Practice Exam","e":"AP Biology","d":"2026-03-23","st":"valid","mc":"42","mt":"60","mp":0.7,"fe":"10.9","fp":"36","ap":"3"},{"s":"Sara Beth Way","sid":"001-0129","t":"AP Physics 1 - Final Exam","e":"AP Physics 1","d":"2026-03-23","st":"valid","mc":"15","mt":"40","mp":0.4,"fe":"","fp":"","ap":""},{"s":"Maddie Price","sid":"001-0046","t":"Final","e":"AP US Government and Politics","d":"2026-03-26","st":"valid","mc":"50","mt":"55","mp":0.9,"fe":"","fp":"","ap":""},{"s":"Reuben Runacres","sid":"001-0740","t":"AP Psychology - Final Practice Exam","e":"AP Psychology","d":"2026-03-27","st":"valid","mc":"54","mt":"75","mp":72.0,"fe":"0","fp":"14","ap":""},{"s":"Jeremy Wang","sid":"001-2458","t":"AP Psychology - Final Practice Exam","e":"AP Psychology","d":"2026-03-27","st":"valid","mc":"51","mt":"75","mp":68.0,"fe":"0","fp":"14","ap":""},{"s":"Vera Li","sid":"001-2478","t":"AP Psychology - Final Practice Exam","e":"AP Psychology","d":"2026-03-27","st":"valid","mc":"48","mt":"75","mp":64.0,"fe":"0","fp":"14","ap":""},{"s":"Ali Romman","sid":"001-0070","t":"AP Human Geography - 2020 Practice Exam 1 MCQ","e":"AP Human Geography","d":"2026-04-09","st":"valid","mc":"0","mt":"60","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Sara Beth Way","sid":"001-0129","t":"AP English Language and Composition - Full Practice Test 3 - APC","e":"AP English Language and Composition","d":"2026-04-08","st":"valid","mc":"38","mt":"45","mp":84.4,"fe":"9.0","fp":"18","ap":"4"},{"s":"Sara Beth Way","sid":"001-0129","t":"AP Physics 1 - Midterm II","e":"AP Physics 1","d":"2026-04-02","st":"valid","mc":"14","mt":"40","mp":35.0,"fe":"","fp":"","ap":""},{"s":"Sara Beth Way","sid":"001-0129","t":"AP Physics 1 - Midterm III","e":"AP Physics 1","d":"2026-04-14","st":"valid","mc":"15","mt":"40","mp":37.5,"fe":"","fp":"","ap":""},{"s":"Emma Cotner","sid":"001-0162","t":"AP Biology - Mid-term Practice Test 2","e":"AP Biology","d":"2026-04-07","st":"valid","mc":"15","mt":"30","mp":50.0,"fe":"17.5","fp":"22","ap":""},{"s":"Austin Way","sid":"001-0175","t":"AP English Language and Composition - Full Practice Test 3 - APC","e":"AP English Language and Composition","d":"2026-04-09","st":"valid","mc":"37","mt":"45","mp":82.2,"fe":"7.0","fp":"18","ap":"3"},{"s":"Austin Way","sid":"001-0175","t":"AP Physics 1 - Midterm II","e":"AP Physics 1","d":"2026-04-02","st":"valid","mc":"21","mt":"40","mp":52.5,"fe":"","fp":"","ap":""},{"s":"Austin Way","sid":"001-0175","t":"AP Physics 1 - Midterm III","e":"AP Physics 1","d":"2026-04-14","st":"valid","mc":"26","mt":"40","mp":65.0,"fe":"","fp":"","ap":""},{"s":"Jacob Kuchinsky","sid":"001-0196","t":"AP Computer Science A - Final Exam","e":"AP Computer Science A","d":"2026-04-03","st":"valid","mc":"21","mt":"36","mp":58.3,"fe":"17.3","fp":"36","ap":"4"},{"s":"Jackson Price","sid":"001-0269","t":"AP Chemistry - Mid-term Practice Test 2","e":"AP Chemistry","d":"2026-04-03","st":"valid","mc":"18","mt":"30","mp":60.0,"fe":"2.9","fp":"34","ap":""},{"s":"Jackson Price","sid":"001-0269","t":"AP Computer Science A - Final Exam","e":"AP Computer Science A","d":"2026-04-07","st":"valid","mc":"26","mt":"36","mp":72.2,"fe":"23.7","fp":"36","ap":"4"},{"s":"Jackson Price","sid":"001-0269","t":"AP Physics 1 - Midterm II","e":"AP Physics 1","d":"2026-04-02","st":"valid","mc":"28","mt":"40","mp":70.0,"fe":"","fp":"","ap":""},{"s":"Jackson Price","sid":"001-0269","t":"AP Physics 1 - Midterm III","e":"AP Physics 1","d":"2026-04-14","st":"valid","mc":"30","mt":"40","mp":75.0,"fe":"","fp":"","ap":""},{"s":"Paty Margain-Junco","sid":"001-0444","t":"AP English Language and Composition - Full Practice Test 3 - APC","e":"AP English Language and Composition","d":"2026-04-09","st":"valid","mc":"40","mt":"45","mp":88.9,"fe":"12.0","fp":"18","ap":"4"},{"s":"Paty Margain-Junco","sid":"001-0444","t":"AP Chemistry - Mid-term Practice Test 2","e":"AP Chemistry","d":"2026-04-03","st":"valid","mc":"20","mt":"30","mp":66.7,"fe":"","fp":"","ap":""},{"s":"Paty Margain-Junco","sid":"001-0444","t":"AP Psychology - Final Practice Exam","e":"AP Psychology","d":"2026-03-30","st":"valid","mc":"53","mt":"75","mp":70.7,"fe":"10.0","fp":"14","ap":"4"},{"s":"Grey Walker","sid":"001-0539","t":"AP Human Geography - 2016 Practice Exam FRQ","e":"AP Human Geography","d":"2026-04-15","st":"valid","mc":"","mt":"","mp":"","fe":"","fp":"","ap":""},{"s":"Grey Walker","sid":"001-0539","t":"AP Human Geography - 2020 Practice Exam 1 MCQ","e":"AP Human Geography","d":"2026-04-09","st":"valid","mc":"0","mt":"60","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Caleb Walker","sid":"001-0580","t":"AP Environmental Science - Final Exam","e":"AP Environmental Science","d":"2026-04-03","st":"valid","mc":"62","mt":"80","mp":77.5,"fe":"","fp":"","ap":""},{"s":"Caleb Walker","sid":"001-0580","t":"AP English Language and Composition - Full Practice Test 3 - APC","e":"AP English Language and Composition","d":"2026-04-08","st":"valid","mc":"37","mt":"45","mp":82.2,"fe":"11.0","fp":"18","ap":"4"},{"s":"Caleb Walker","sid":"001-0580","t":"AP US History - 2019 International Practice Exam MCQ","e":"AP United States History","d":"2026-04-09","st":"valid","mc":"0","mt":"55","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Michael Cai","sid":"001-0638","t":"AP Biology - Final Exam","e":"AP Biology","d":"2026-04-03","st":"valid","mc":"42","mt":"60","mp":70.0,"fe":"23.1","fp":"34","ap":"4"},{"s":"Cruce Saunders IV","sid":"001-0679","t":"AP Physics 1 - Midterm II","e":"AP Physics 1","d":"2026-04-02","st":"valid","mc":"18","mt":"40","mp":45.0,"fe":"","fp":"","ap":""},{"s":"Cruce Saunders IV","sid":"001-0679","t":"AP Physics 1 - Midterm III","e":"AP Physics 1","d":"2026-04-14","st":"valid","mc":"18","mt":"40","mp":45.0,"fe":"","fp":"","ap":""},{"s":"Grady Swanson","sid":"001-0728","t":"AP Biology - Mid-term Practice Test 2","e":"AP Biology","d":"2026-04-02","st":"valid","mc":"17","mt":"30","mp":56.7,"fe":"7.2","fp":"22","ap":""},{"s":"Grady Swanson","sid":"001-0728","t":"AP Human Geography - 2020 Practice Exam 1 MCQ","e":"AP Human Geography","d":"2026-04-09","st":"valid","mc":"0","mt":"60","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Reuben Runacres","sid":"001-0740","t":"AP English Literature and Composition - Full Practice Test 1 - APC","e":"AP English Literature and Composition","d":"2026-04-09","st":"valid","mc":"41","mt":"50","mp":82.0,"fe":"11.0","fp":"18","ap":"4"},{"s":"Reuben Runacres","sid":"001-0740","t":"AP Psychology - Practice Exam 1 - APC","e":"AP Psychology","d":"2026-04-14","st":"valid","mc":"65","mt":"75","mp":86.7,"fe":"","fp":"","ap":""},{"s":"Reuben Runacres","sid":"001-0740","t":"AP English Literature and Composition - Full Practice Test 2 - APC","e":"AP English Literature and Composition","d":"2026-04-15","st":"valid","mc":"44","mt":"54","mp":81.5,"fe":"8.0","fp":"18","ap":"4"},{"s":"Benny Valles","sid":"001-0749","t":"AP Human Geography - 2020 Practice Exam 1 MCQ","e":"AP Human Geography","d":"2026-04-09","st":"valid","mc":"0","mt":"60","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Ella Dietz","sid":"001-0823","t":"AP Chemistry - Mid-term Practice Test 2","e":"AP Chemistry","d":"2026-04-07","st":"valid","mc":"13","mt":"30","mp":43.3,"fe":"21.4","fp":"34","ap":""},{"s":"Ella Gremont","sid":"001-0839","t":"AP Chemistry - Mid-term Practice Test 2","e":"AP Chemistry","d":"2026-04-03","st":"valid","mc":"17","mt":"30","mp":56.7,"fe":"","fp":"","ap":""},{"s":"Ella Gremont","sid":"001-0839","t":"AP English Language and Composition - Full Practice Test 2 - APC","e":"AP English Language and Composition","d":"2026-04-14","st":"valid","mc":"38","mt":"45","mp":84.4,"fe":"16.0","fp":"18","ap":"4"},{"s":"Madeleine Grams","sid":"001-1254","t":"AP English Language and Composition - Full Practice Test 3 - APC","e":"AP English Language and Composition","d":"2026-04-08","st":"valid","mc":"44","mt":"45","mp":97.8,"fe":"13.0","fp":"18","ap":"4"},{"s":"Madeleine Grams","sid":"001-1254","t":"AP English Language and Composition - Practice Exam 3 MCQ","e":"AP English Language and Composition","d":"2026-04-07","st":"valid","mc":"0","mt":"45","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Madeleine Grams","sid":"001-1254","t":"AP US History - 2019 International Practice Exam MCQ","e":"AP United States History","d":"2026-04-09","st":"valid","mc":"0","mt":"55","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Geetesh Parelly","sid":"001-2133","t":"AP English Language and Composition - Full Practice Test 3 - APC","e":"AP English Language and Composition","d":"2026-04-08","st":"valid","mc":"40","mt":"45","mp":88.9,"fe":"13.0","fp":"18","ap":"4"},{"s":"Geetesh Parelly","sid":"001-2133","t":"AP Chemistry - Mid-term Practice Test 2","e":"AP Chemistry","d":"2026-04-03","st":"valid","mc":"21","mt":"30","mp":70.0,"fe":"18.2","fp":"34","ap":""},{"s":"Geetesh Parelly","sid":"001-2133","t":"AP English Language and Composition - Practice Exam 3 MCQ","e":"AP English Language and Composition","d":"2026-04-07","st":"valid","mc":"0","mt":"45","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Sloka Vudumu","sid":"001-2404","t":"AP English Language and Composition - Full Practice Test 3 - APC","e":"AP English Language and Composition","d":"2026-04-08","st":"valid","mc":"27","mt":"45","mp":60.0,"fe":"7.0","fp":"18","ap":"3"},{"s":"Sloka Vudumu","sid":"001-2404","t":"AP English Language and Composition - Full Practice Test 2 - APC","e":"AP English Language and Composition","d":"2026-04-15","st":"valid","mc":"37","mt":"45","mp":82.2,"fe":"10.0","fp":"18","ap":"4"},{"s":"Jeremy Wang","sid":"001-2458","t":"AP Physics 1 - Midterm II","e":"AP Physics 1","d":"2026-04-02","st":"valid","mc":"36","mt":"40","mp":90.0,"fe":"","fp":"","ap":""},{"s":"Vera Li","sid":"001-2478","t":"AP Biology - Mid-term Practice Test 2","e":"AP Biology","d":"2026-04-03","st":"valid","mc":"18","mt":"30","mp":60.0,"fe":"16.1","fp":"22","ap":""},{"s":"Austin Lin","sid":"001-2515","t":"AP Biology - Mid-term Practice Test 2","e":"AP Biology","d":"2026-04-03","st":"valid","mc":"16","mt":"30","mp":53.3,"fe":"5.4","fp":"22","ap":""},{"s":"Aoife Huey","sid":"001-2539","t":"AP Psychology - Midterm Practice Exam","e":"AP Psychology","d":"2026-04-09","st":"valid","mc":"83","mt":"150","mp":55.3,"fe":"12.0","fp":"14","ap":"4"},{"s":"Evan Klein","sid":"001-2546","t":"AP Human Geography - 2016 Practice Exam FRQ","e":"AP Human Geography","d":"2026-04-15","st":"valid","mc":"","mt":"","mp":"","fe":"","fp":"","ap":""},{"s":"Ananya Kakarlapudi","sid":"001-8749","t":"AP English Language and Composition - Practice Exam 3 MCQ","e":"AP English Language and Composition","d":"2026-04-07","st":"valid","mc":"0","mt":"45","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Ananya Kakarlapudi","sid":"001-8749","t":"AP Psychology - Final Practice Exam","e":"AP Psychology","d":"2026-04-03","st":"valid","mc":"60","mt":"75","mp":80.0,"fe":"12.0","fp":"14","ap":"4"},{"s":"Ananya Kakarlapudi","sid":"001-8749","t":"AP English Language and Composition - Full Practice Test 2 - APC","e":"AP English Language and Composition","d":"2026-04-15","st":"valid","mc":"42","mt":"45","mp":93.3,"fe":"14.0","fp":"18","ap":"4"},{"s":"Jaiden Bhakta","sid":"013-0763","t":"AP Biology - Mid-term Practice Test 2","e":"AP Biology","d":"2026-04-10","st":"partial","mc":"2","mt":"3","mp":66.7,"fe":"","fp":"","ap":""},{"s":"Luca Sanchez","sid":"015-2895","t":"AP Human Geography - 2020 Practice Exam 1 MCQ","e":"AP Human Geography","d":"2026-04-09","st":"valid","mc":"0","mt":"60","mp":0.0,"fe":"","fp":"","ap":""},{"s":"Aidan Wong","sid":"050-4719","t":"AP English Language and Composition - Full Practice Test 3 - APC","e":"AP English Language and Composition","d":"2026-04-14","st":"valid","mc":"44","mt":"45","mp":97.8,"fe":"15.0","fp":"18","ap":"5"}],"i":[{"e":"AP Biology","total":9,"full":4,"mcq_only":3,"frq_only":2,"new":7},{"e":"AP Calculus AB","total":1,"full":1,"mcq_only":0,"frq_only":0,"new":0},{"e":"AP Calculus BC","total":1,"full":1,"mcq_only":0,"frq_only":0,"new":0},{"e":"AP Chemistry","total":4,"full":3,"mcq_only":0,"frq_only":1,"new":2},{"e":"AP Computer Science A","total":6,"full":4,"mcq_only":1,"frq_only":1,"new":4},{"e":"AP English Language and Composition","total":11,"full":7,"mcq_only":4,"frq_only":0,"new":7},{"e":"AP English Literature and Composition","total":6,"full":4,"mcq_only":2,"frq_only":0,"new":5},{"e":"AP Environmental Science","total":4,"full":4,"mcq_only":0,"frq_only":0,"new":0},{"e":"AP HuGeo Mini","total":1,"full":1,"mcq_only":0,"frq_only":0,"new":1},{"e":"AP Human Geo","total":1,"full":1,"mcq_only":0,"frq_only":0,"new":1},{"e":"AP Human Geography","total":10,"full":6,"mcq_only":3,"frq_only":1,"new":4},{"e":"AP Microeconomics","total":3,"full":2,"mcq_only":1,"frq_only":0,"new":1},{"e":"AP Music Theory","total":1,"full":1,"mcq_only":0,"frq_only":0,"new":0},{"e":"AP Physics 1","total":7,"full":6,"mcq_only":1,"frq_only":0,"new":4},{"e":"AP Physics 2","total":2,"full":2,"mcq_only":0,"frq_only":0,"new":0},{"e":"AP Psychology","total":10,"full":6,"mcq_only":2,"frq_only":2,"new":6},{"e":"AP Statistics","total":1,"full":1,"mcq_only":0,"frq_only":0,"new":0},{"e":"AP US Government and Politics","total":6,"full":6,"mcq_only":0,"frq_only":0,"new":0},{"e":"AP US History","total":6,"full":6,"mcq_only":0,"frq_only":0,"new":0},{"e":"AP United States Government and Politics","total":4,"full":0,"mcq_only":2,"frq_only":2,"new":4},{"e":"AP United States History","total":3,"full":0,"mcq_only":2,"frq_only":1,"new":3},{"e":"AP World History","total":8,"full":8,"mcq_only":0,"frq_only":0,"new":0},{"e":"AP World History: Modern","total":4,"full":1,"mcq_only":2,"frq_only":1,"new":4},{"e":"APHG Mixed-Topic MCQ Practice","total":1,"full":0,"mcq_only":1,"frq_only":0,"new":1}]};
+const tabs=['completions','students','heatmap','inventory','timeline','scores'];
+const tabNames=['Completions (123)','Students (43)','Heatmap','Inventory (110)','Timeline','AP Scores'];
+
+document.getElementById('tabbar').innerHTML=tabs.map((t,i)=>
+  `<div class="tab${i===0?' active':''}" onclick="showV('${t}',this)">${tabNames[i]}</div>`
+).join('');
+
+function showV(id,el){
+  document.querySelectorAll('.vw').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+function ap(score){
+  if(!score)return'<span style="color:#444">-</span>';
+  const s=parseInt(score);
+  return`<span class="s${s}">${s}</span>`;
+}
+
+// Stats bar
+const valid=D.c.filter(r=>r.st==='valid');
+const stuSet=new Set(D.c.map(r=>r.sid));
+const examSet=new Set(D.c.map(r=>r.e));
+const mcqs=valid.filter(r=>r.mp);
+const avgMcq=mcqs.length?mcqs.reduce((a,r)=>a+r.mp,0)/mcqs.length:0;
+const withAp=valid.filter(r=>r.ap);
+const avgAp=withAp.length?withAp.reduce((a,r)=>a+parseFloat(r.ap),0)/withAp.length:0;
+const recent=D.c.filter(r=>r.d>='2026-04-01').length;
+
+document.getElementById('stats').innerHTML=`
+  <div class="stat"><div class="v">${D.c.length}</div><div class="l">Completions</div></div>
+  <div class="stat"><div class="v">${stuSet.size}</div><div class="l">Students</div></div>
+  <div class="stat"><div class="v">${examSet.size}</div><div class="l">AP Exams</div></div>
+  <div class="stat"><div class="v">${valid.length}</div><div class="l">Valid</div></div>
+  <div class="stat"><div class="v">${avgMcq.toFixed(1)}%</div><div class="l">Avg MCQ</div></div>
+  <div class="stat"><div class="v">${avgAp.toFixed(1)}</div><div class="l">Avg AP Score</div></div>
+  <div class="stat"><div class="v">${recent}</div><div class="l">Since Apr 1</div></div>
+  <div class="stat"><div class="v">${D.i.reduce((a,r)=>a+r.total,0)}</div><div class="l">Inventory</div></div>`;
+
+// 1. Completions
+let ct='<input class="filter" placeholder="Filter..." oninput="filt(this,\'ctbl\')"><table id="ctbl"><thead><tr><th>Date</th><th>Student</th><th>Exam</th><th>Test</th><th>MCQ</th><th>FRQ</th><th>AP</th><th>Status</th></tr></thead><tbody>';
+D.c.sort((a,b)=>b.d.localeCompare(a.d)).forEach(r=>{
+  const rc=r.d>='2026-04-01'?' class="recent"':'';
+  const mcq=r.mc&&r.mt?r.mc+'/'+r.mt+(r.mp?' <span style="color:#888">('+r.mp+'%)</span>':''):'';
+  const frq=r.fe&&r.fp?r.fe+'/'+r.fp:'';
+  ct+=`<tr${rc}><td>${r.d}</td><td>${r.s}</td><td style="font-size:.7rem">${r.e}</td><td style="font-size:.7rem">${r.t}</td><td>${mcq}</td><td>${frq}</td><td>${ap(r.ap)}</td><td class="s${r.st[0]}">${r.st}</td></tr>`;
+});
+ct+='</tbody></table>';
+document.getElementById('completions').innerHTML=ct;
+
+// 2. Students
+const sm={};
+D.c.filter(r=>r.st==='valid').forEach(r=>{
+  if(!sm[r.s])sm[r.s]={n:0,ex:new Set(),ms:[],as:[],ds:[],exams:{}};
+  const s=sm[r.s];s.n++;s.ex.add(r.e);if(r.mp)s.ms.push(r.mp);if(r.ap)s.as.push(parseFloat(r.ap));s.ds.push(r.d);
+  if(!s.exams[r.e])s.exams[r.e]=[];s.exams[r.e].push(r);
+});
+let st='<table><thead><tr><th>Student</th><th>Tests</th><th>Exams</th><th>Avg MCQ%</th><th>Avg AP</th><th>Latest</th><th>Exams Taken</th></tr></thead><tbody>';
+Object.entries(sm).sort((a,b)=>b[1].n-a[1].n).forEach(([name,s])=>{
+  const am=s.ms.length?(s.ms.reduce((a,v)=>a+v,0)/s.ms.length).toFixed(1):'';
+  const aa=s.as.length?(s.as.reduce((a,v)=>a+v,0)/s.as.length).toFixed(1):'';
+  const lat=s.ds.sort().pop();
+  const exTags=Object.keys(s.exams).map(e=>`<span class="exam-tag">${e.replace('AP ','')}</span>`).join('');
+  st+=`<tr><td><b>${name}</b></td><td>${s.n}</td><td>${s.ex.size}</td><td>${am}</td><td>${ap(aa)}</td><td>${lat}</td><td>${exTags}</td></tr>`;
+});
+st+='</tbody></table>';
+document.getElementById('students').innerHTML=st;
+
+// 3. Heatmap
+const allStu=[...new Set(D.c.filter(r=>r.st==='valid').map(r=>r.s))].sort();
+const allEx=[...new Set(D.c.map(r=>r.e))].sort();
+let hm='<div style="overflow-x:auto"><table><thead><tr><th style="min-width:140px">Student</th>';
+allEx.forEach(e=>{hm+=`<th style="min-width:28px;font-size:.55rem;writing-mode:vertical-lr;transform:rotate(180deg);height:110px">${e.replace('AP ','')}</th>`;});
+hm+='</tr></thead><tbody>';
+allStu.forEach(name=>{
+  hm+='<tr><td style="font-size:.72rem">'+name+'</td>';
+  allEx.forEach(exam=>{
+    const m=D.c.filter(r=>r.s===name&&r.e===exam&&r.st==='valid');
+    const c=m.length;
+    const cls=c>=3?'h3':c>=2?'h2':c>=1?'h1':'h0';
+    const tip=m.map(r=>r.t.substring(0,40)+' '+r.d).join('&#10;');
+    hm+=`<td><div class="hm ${cls}" title="${tip}">${c||''}</div></td>`;
+  });
+  hm+='</tr>';
+});
+hm+='</tbody></table></div>';
+document.getElementById('heatmap').innerHTML=hm;
+
+// 4. Inventory
+const examRes={};D.c.forEach(r=>{examRes[r.e]=(examRes[r.e]||0)+1;});
+let iv='<table><thead><tr><th>AP Exam</th><th>Total</th><th>Full</th><th>MCQ-only</th><th>FRQ-only</th><th>New</th><th>Completions</th></tr></thead><tbody>';
+D.i.sort((a,b)=>b.total-a.total).forEach(r=>{
+  iv+=`<tr><td>${r.e}</td><td><b>${r.total}</b></td><td>${r.full}</td><td>${r.mcq_only}</td><td>${r.frq_only}</td><td>${r.new||0}</td><td>${examRes[r.e]||0}</td></tr>`;
+});
+iv+='</tbody></table>';
+document.getElementById('inventory').innerHTML=iv;
+
+// 5. Timeline
+const bw={};
+D.c.filter(r=>r.d).forEach(r=>{
+  const d=new Date(r.d);const ws=new Date(d);ws.setDate(d.getDate()-d.getDay());
+  const k=ws.toISOString().slice(0,10);
+  if(!bw[k])bw[k]={v:0,p:0,i:0,stu:new Set()};
+  if(r.st==='valid')bw[k].v++;else if(r.st==='partial')bw[k].p++;else bw[k].i++;
+  bw[k].stu.add(r.s);
+});
+let tl='<table><thead><tr><th>Week</th><th>Valid</th><th>Partial</th><th>Invalid</th><th>Students</th><th></th></tr></thead><tbody>';
+Object.entries(bw).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([w,d])=>{
+  const bar=`<span class="bar bm" style="width:${d.v*6}px"></span><span class="bar bp" style="width:${d.p*6}px"></span><span class="bar bg" style="width:${d.i*6}px"></span>`;
+  tl+=`<tr><td>${w}</td><td>${d.v}</td><td>${d.p}</td><td>${d.i}</td><td>${d.stu.size}</td><td>${bar}</td></tr>`;
+});
+tl+='</tbody></table>';
+document.getElementById('timeline').innerHTML=tl;
+
+// 6. AP Scores
+const scoreData={};
+valid.filter(r=>r.ap).forEach(r=>{
+  if(!scoreData[r.e])scoreData[r.e]=[];
+  scoreData[r.e].push({s:r.s,ap:parseInt(r.ap),mcq:r.mp,t:r.t,d:r.d});
+});
+let sc='';
+Object.entries(scoreData).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([exam,results])=>{
+  const avg=(results.reduce((a,r)=>a+r.ap,0)/results.length).toFixed(1);
+  const dist=[0,0,0,0,0];results.forEach(r=>dist[r.ap-1]++);
+  sc+=`<div style="margin-bottom:16px"><h3 style="font-size:.9rem;color:#ccc">${exam} <span style="color:#60a5fa;font-size:.8rem">(avg ${avg})</span></h3>`;
+  sc+='<div style="display:flex;gap:4px;margin:6px 0">';
+  for(let i=4;i>=0;i--){
+    const pct=results.length?dist[i]/results.length*100:0;
+    sc+=`<div style="text-align:center"><div class="s${i+1}" style="font-size:.8rem;font-weight:700">${i+1}</div><div style="background:#1a1a2e;width:40px;height:${Math.max(2,pct*1.5)}px;border-radius:3px;margin:2px auto" class="bar bm"></div><div style="font-size:.6rem;color:#888">${dist[i]}</div></div>`;
+  }
+  sc+='</div>';
+  sc+='<table style="margin-top:4px"><thead><tr><th>Student</th><th>AP</th><th>MCQ%</th><th>Test</th><th>Date</th></tr></thead><tbody>';
+  results.sort((a,b)=>b.ap-a.ap).forEach(r=>{
+    sc+=`<tr><td>${r.s}</td><td>${ap(r.ap)}</td><td>${r.mcq||''}</td><td style="font-size:.7rem">${r.t}</td><td>${r.d}</td></tr>`;
+  });
+  sc+='</tbody></table></div>';
+});
+document.getElementById('scores').innerHTML=sc;
+
+function filt(el,id){
+  const q=el.value.toLowerCase();
+  document.querySelectorAll('#'+id+' tbody tr').forEach(tr=>{
+    tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none';
+  });
+}
+</script>
+</body>
+</html>

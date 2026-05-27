@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Argus — Intelligent Academic Year System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #FAFAF7;
+    color: #1a1a1a;
+    line-height: 1.6;
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 24px;
+    background: white;
+    border-bottom: 1px solid #e8e8e4;
+  }
+  .hero h1 { font-size: 72px; font-weight: 800; letter-spacing: 8px; color: #1a1a1a; margin-bottom: 12px; }
+  .hero .tagline { font-size: 15px; color: #888; font-style: italic; font-weight: 300; margin-bottom: 48px; }
+  .hero .summary { max-width: 520px; font-size: 14px; color: #555; line-height: 1.9; }
+
+  /* Layout */
+  .section { max-width: 900px; margin: 0 auto; padding: 80px 24px 48px; }
+  .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 2.5px; font-weight: 600; color: #888; margin-bottom: 8px; }
+  .section h2 { font-size: 26px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+  .section-sub { font-size: 13px; color: #888; margin-bottom: 32px; }
+  .divider { border: none; border-top: 1px solid #e8e8e4; max-width: 900px; margin: 0 auto; }
+
+  /* Flow pipeline */
+  .flow { display: flex; align-items: center; gap: 0; margin: 32px 0 24px; flex-wrap: wrap; justify-content: center; }
+  .flow-step { padding: 14px 20px; border-radius: 8px; text-align: center; min-width: 120px; }
+  .flow-step .fs-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; opacity: 0.8; }
+  .flow-step .fs-title { font-size: 13px; font-weight: 700; margin-top: 2px; }
+  .flow-arrow { color: #ccc; font-size: 20px; padding: 0 4px; }
+
+  /* Vocabulary */
+  .vocab { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
+  .vocab-card { background: white; border: 1px solid #e8e8e4; border-radius: 10px; padding: 20px; }
+  .vocab-card .vc-term { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .vocab-card .vc-def { font-size: 12px; color: #555; line-height: 1.7; }
+
+  /* Phase cards */
+  .phases { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 24px 0; }
+  .phase-card { border-radius: 10px; padding: 18px 14px; text-align: center; color: white; }
+  .phase-card .pc-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .phase-card .pc-grain { font-size: 9px; opacity: 0.8; margin-top: 4px; }
+  .phase-card .pc-goal { font-size: 9px; opacity: 0.7; margin-top: 6px; font-style: italic; }
+
+  /* Signal section — per phase */
+  .signal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+  .signal-phase { background: white; border: 1px solid #e8e8e4; border-radius: 10px; padding: 20px; border-top: 3px solid; }
+  .signal-phase .sp-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+  .signal-phase .sp-signals { display: flex; flex-wrap: wrap; gap: 6px; }
+  .signal-tag { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+
+  /* Diagnosis tree */
+  .dx-tree { display: flex; flex-direction: column; gap: 4px; margin: 24px 0; }
+  .dx-step { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 8px; background: white; border: 1px solid #e8e8e4; }
+  .dx-num { font-size: 20px; font-weight: 800; min-width: 28px; color: #ccc; }
+  .dx-content { flex: 1; }
+  .dx-question { font-size: 12px; font-weight: 600; color: #1a1a1a; }
+  .dx-detail { font-size: 10px; color: #888; margin-top: 2px; }
+  .dx-result { text-align: right; min-width: 120px; }
+  .dx-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .dx-owner { font-size: 9px; color: #999; margin-top: 2px; }
+  .dx-connector { text-align: center; color: #ccc; font-size: 9px; padding: 2px 0; }
+
+  /* Action tiers */
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
+  .tier-card { background: white; border-radius: 10px; padding: 18px; border: 1px solid #e8e8e4; border-top: 3px solid; }
+  .tier-card .tc-name { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .tier-card .tc-desc { font-size: 10px; color: #888; margin-bottom: 10px; }
+  .tier-card ul { list-style: none; }
+  .tier-card ul li { font-size: 10px; color: #444; padding: 3px 0 3px 14px; position: relative; }
+  .tier-card ul li::before { content: '→'; position: absolute; left: 0; color: #bbb; }
+
+  /* Report mock */
+  .report-mock { background: white; border-radius: 12px; padding: 28px; border: 1px solid #e8e8e4; font-size: 11px; margin: 24px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+  .rm-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0ec; padding-bottom: 12px; margin-bottom: 16px; }
+  .rm-title { font-size: 15px; font-weight: 800; letter-spacing: 3px; color: #1a1a1a; }
+  .rm-date { color: #999; font-size: 10px; }
+  .rm-headline { background: #fffbf0; border: 1px solid #f5e6c8; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; }
+  .rm-headline .hl-label { color: #e67e22; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .rm-headline .hl-text { color: #1a1a1a; font-size: 12px; margin-top: 4px; font-weight: 500; }
+  .rm-section { margin-top: 14px; }
+  .rm-section-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; padding-left: 2px; }
+  .rm-item { border-left: 3px solid; padding-left: 12px; margin-bottom: 10px; }
+  .rm-item .ri-name { font-size: 11px; font-weight: 600; color: #1a1a1a; }
+  .rm-item .ri-detail { font-size: 10px; color: #888; margin-top: 2px; }
+  .rm-item .ri-action { font-size: 10px; margin-top: 3px; font-weight: 500; }
+  .rm-footer { margin-top: 16px; padding-top: 12px; border-top: 1px solid #f0f0ec; font-size: 9px; color: #bbb; }
+
+  /* Lifecycle */
+  .lifecycle { display: flex; align-items: center; justify-content: center; gap: 0; margin: 32px 0; flex-wrap: wrap; }
+  .lc-step { padding: 10px 16px; border-radius: 6px; text-align: center; background: white; border: 1px solid #e8e8e4; }
+  .lc-step .lc-name { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .lc-step .lc-desc { font-size: 9px; color: #888; margin-top: 2px; }
+  .lc-arrow { color: #ccc; font-size: 14px; padding: 0 6px; }
+
+  /* Calendar */
+  .calendar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 24px 0; }
+  .cal-month { background: white; border: 1px solid #e8e8e4; border-radius: 8px; padding: 12px; text-align: center; }
+  .cal-month .cm-name { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .cal-month .cm-phases { display: flex; flex-wrap: wrap; gap: 3px; justify-content: center; }
+  .cm-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+  /* Principles */
+  .principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 24px 0; }
+  .principle { background: white; border: 1px solid #e8e8e4; border-radius: 8px; padding: 16px; text-align: center; }
+  .principle .pr-num { font-size: 20px; font-weight: 800; color: #e8e8e4; margin-bottom: 4px; }
+  .principle .pr-name { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .principle .pr-desc { font-size: 9px; color: #888; margin-top: 4px; }
+
+  /* Note box */
+  .note { background: #f8f9fa; border: 1px solid #e8e8e4; border-radius: 8px; padding: 14px 18px; font-size: 11px; color: #666; line-height: 1.7; margin: 16px 0; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 60px 24px; color: #ccc; font-size: 10px; letter-spacing: 1px; }
+
+  @media (max-width: 768px) {
+    .vocab { grid-template-columns: 1fr; }
+    .phases { grid-template-columns: repeat(2, 1fr); }
+    .signal-grid { grid-template-columns: 1fr; }
+    .tiers { grid-template-columns: 1fr; }
+    .principles { grid-template-columns: repeat(2, 1fr); }
+    .calendar { grid-template-columns: repeat(3, 1fr); }
+    .hero h1 { font-size: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>ARGUS</h1>
+  <div class="tagline">The hundred-eyed. Never sleeps. Sees everything.</div>
+  <div class="summary">
+    An intelligent system that monitors every student, every course, every day &mdash; and tells the operator exactly who needs attention, why, and what to do about it.
+  </div>
+</div>
+
+<!-- THE FLOW -->
+<div class="section">
+  <div class="section-label">How it works</div>
+  <h2>Academic Intelligent System</h2>
+  <div class="section-sub">Each cycle, for each active grain. This is the whole system.</div>
+
+  <div class="flow">
+    <div class="flow-step" style="background: #f0f4ff; color: #3b5bdb;">
+      <div class="fs-label">Read</div>
+      <div class="fs-title">Fact Data</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background: #fff3e0; color: #e65100;">
+      <div class="fs-label">Compute</div>
+      <div class="fs-title">Signal</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background: #e8f5e9; color: #2e7d32;">
+      <div class="fs-label">Compute</div>
+      <div class="fs-title">Forecast</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background: #fce4ec; color: #c62828;">
+      <div class="fs-label">Determine</div>
+      <div class="fs-title">Action</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background: #1a1a1a; color: white;">
+      <div class="fs-label">Output</div>
+      <div class="fs-title">Report</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Signal</strong> = what's happening RIGHT NOW. <strong>Forecast</strong> = where they'll be IF nothing changes. <strong>Action</strong> = what to do about it. One line in the daily report per grain.
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- VOCABULARY -->
+<div class="section">
+  <div class="section-label">Language</div>
+  <h2>Vocabulary</h2>
+  <div class="section-sub">Six terms. No others needed.</div>
+
+  <div class="vocab">
+    <div class="vocab-card">
+      <div class="vc-term" style="color: #5c6bc0;">Phase</div>
+      <div class="vc-def">What the student is working toward. Defines the rules. Each phase has its own signals, thresholds, data.</div>
+    </div>
+    <div class="vocab-card">
+      <div class="vc-term" style="color: #7b1fa2;">Grain</div>
+      <div class="vc-def">The unit of analysis. Phase-specific. student &times; subject, student &times; exam, student &times; course.</div>
+    </div>
+    <div class="vocab-card">
+      <div class="vc-term" style="color: #e65100;">Signal</div>
+      <div class="vc-def">What's happening NOW. A named state derived from data. Per grain. Deterministic.</div>
+    </div>
+    <div class="vocab-card">
+      <div class="vc-term" style="color: #2e7d32;">Forecast</div>
+      <div class="vc-def">Where they'll be IF nothing changes. Gap to target. Simple math, never guesses.</div>
+    </div>
+    <div class="vocab-card">
+      <div class="vc-term" style="color: #c62828;">Action</div>
+      <div class="vc-def">What the operator should do. Determined by signal + forecast. Three tiers: auto, notify, recommend.</div>
+    </div>
+    <div class="vocab-card">
+      <div class="vc-term" style="color: #455a64;">Cycle</div>
+      <div class="vc-def">When the system runs. Weekly (primary), daily (crunch), monthly (patterns).</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PHASES -->
+<div class="section">
+  <div class="section-label">Structure</div>
+  <h2>Five Phases</h2>
+  <div class="section-sub">A student can be in multiple simultaneously. Each phase has its own rules.</div>
+
+  <div class="phases">
+    <div class="phase-card" style="background: #5c6bc0;">
+      <div class="pc-name">Onboard</div>
+      <div class="pc-grain">student</div>
+      <div class="pc-goal">Placement confirmed</div>
+    </div>
+    <div class="phase-card" style="background: #7b1fa2;">
+      <div class="pc-name">Mastery</div>
+      <div class="pc-grain">student &times; subject</div>
+      <div class="pc-goal">G8 mastery</div>
+    </div>
+    <div class="phase-card" style="background: #0277bd;">
+      <div class="pc-name">SAT</div>
+      <div class="pc-grain">student &times; section</div>
+      <div class="pc-goal">Target score</div>
+    </div>
+    <div class="phase-card" style="background: #00695c;">
+      <div class="pc-name">AP</div>
+      <div class="pc-grain">student &times; exam</div>
+      <div class="pc-goal">Score &ge; 4</div>
+    </div>
+    <div class="phase-card" style="background: #4e342e;">
+      <div class="pc-name">Credits</div>
+      <div class="pc-grain">student &times; course</div>
+      <div class="pc-goal">100% by deadline</div>
+    </div>
+  </div>
+
+  <div class="note">
+    A typical student: Mastery (4 subjects active) + AP (1 exam) + Credits (2 courses) = <strong>7 active grains</strong> monitored every cycle.
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SIGNALS PER PHASE -->
+<div class="section">
+  <div class="section-label">Detection</div>
+  <h2>Signals by Phase</h2>
+  <div class="section-sub">Each phase produces its own signal vocabulary.</div>
+
+  <div class="signal-grid">
+    <div class="signal-phase" style="border-top-color: #7b1fa2;">
+      <div class="sp-title" style="color: #7b1fa2;">Mastery</div>
+      <div class="sp-signals">
+        <span class="signal-tag" style="background: #e8f5e9; color: #2e7d32;">ON_TRACK</span>
+        <span class="signal-tag" style="background: #fff3e0; color: #e65100;">READY</span>
+        <span class="signal-tag" style="background: #fce4ec; color: #c62828;">STUCK</span>
+        <span class="signal-tag" style="background: #fce4ec; color: #c62828;">IDLE</span>
+        <span class="signal-tag" style="background: #f5f5f5; color: #999;">NO_DATA</span>
+        <span class="signal-tag" style="background: #e3f2fd; color: #1565c0;">EXIT</span>
+      </div>
+      <div style="font-size: 9px; color: #888; margin-top: 8px;">STUCK + IDLE can co-occur. 3+ fails = STUCK. 7+ days = IDLE.</div>
+    </div>
+    <div class="signal-phase" style="border-top-color: #00695c;">
+      <div class="sp-title" style="color: #00695c;">AP</div>
+      <div class="sp-signals">
+        <span class="signal-tag" style="background: #e8f5e9; color: #2e7d32;">on_track</span>
+        <span class="signal-tag" style="background: #fce4ec; color: #c62828;">off_track</span>
+        <span class="signal-tag" style="background: #f5f5f5; color: #999;">no_signal</span>
+      </div>
+      <div style="font-size: 9px; color: #888; margin-top: 8px;">Off_track triggers diagnosis: motivation → placement → curriculum.</div>
+    </div>
+    <div class="signal-phase" style="border-top-color: #0277bd;">
+      <div class="sp-title" style="color: #0277bd;">SAT</div>
+      <div class="sp-signals">
+        <span class="signal-tag" style="background: #e8f5e9; color: #2e7d32;">on_track</span>
+        <span class="signal-tag" style="background: #fff3e0; color: #e65100;">declining</span>
+        <span class="signal-tag" style="background: #f5f5f5; color: #999;">no_baseline</span>
+        <span class="signal-tag" style="background: #fce4ec; color: #c62828;">critical</span>
+      </div>
+      <div style="font-size: 9px; color: #888; margin-top: 8px;">Active only during test windows. Daily scan in crunch.</div>
+    </div>
+    <div class="signal-phase" style="border-top-color: #4e342e;">
+      <div class="sp-title" style="color: #4e342e;">Credits</div>
+      <div class="sp-signals">
+        <span class="signal-tag" style="background: #e8f5e9; color: #2e7d32;">on_pace</span>
+        <span class="signal-tag" style="background: #fff3e0; color: #e65100;">behind</span>
+        <span class="signal-tag" style="background: #fce4ec; color: #c62828;">stalled</span>
+        <span class="signal-tag" style="background: #fce4ec; color: #c62828;">critical</span>
+      </div>
+      <div style="font-size: 9px; color: #888; margin-top: 8px;">Pacing math: remaining XP &divide; remaining days vs. daily goal.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SUFFICIENCY -->
+<div class="section">
+  <div class="section-label">Gate</div>
+  <h2>Signal Sufficiency</h2>
+  <div class="section-sub">Before computing any signal: do we have enough data? This check runs first, every phase, every grain.</div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0;">
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 10px; padding: 20px; border-top: 3px solid #2e7d32;">
+      <div style="font-size: 11px; font-weight: 700; color: #2e7d32; text-transform: uppercase; letter-spacing: 0.5px;">Sufficient</div>
+      <div style="font-size: 11px; color: #555; margin-top: 8px; line-height: 1.7;">Have progress data AND effort evidence. Can detect on/off track. Can diagnose WHY.</div>
+      <div style="font-size: 9px; color: #888; margin-top: 8px; border-top: 1px solid #f0f0ec; padding-top: 8px;">→ Full signal computation runs.</div>
+    </div>
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 10px; padding: 20px; border-top: 3px solid #e65100;">
+      <div style="font-size: 11px; font-weight: 700; color: #e65100; text-transform: uppercase; letter-spacing: 0.5px;">Partial</div>
+      <div style="font-size: 11px; color: #555; margin-top: 8px; line-height: 1.7;">Have progress data but missing engagement. Can detect on/off track. CANNOT determine why.</div>
+      <div style="font-size: 9px; color: #888; margin-top: 8px; border-top: 1px solid #f0f0ec; padding-top: 8px;">→ Signal fires with confidence: low.</div>
+    </div>
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 10px; padding: 20px; border-top: 3px solid #c62828;">
+      <div style="font-size: 11px; font-weight: 700; color: #c62828; text-transform: uppercase; letter-spacing: 0.5px;">Insufficient</div>
+      <div style="font-size: 11px; color: #555; margin-top: 8px; line-height: 1.7;">No data at all. Can't assess anything. System is blind to this grain.</div>
+      <div style="font-size: 9px; color: #888; margin-top: 8px; border-top: 1px solid #f0f0ec; padding-top: 8px;">→ Signal = NO_DATA / no_signal. Process failure.</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Sufficiency is non-negotiable.</strong> Argus never guesses. If the data isn't there, it says so — loudly. An insufficient grain appears in the CRITICAL section of the report. Blind spots are treated as seriously as off-track students.<br><br>
+    <strong>Progress data</strong> tells you IF they're on track. <strong>Effort evidence</strong> tells you WHY they're off track. Without effort data, you can flag a problem but can't route it to the right owner.
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- FORECAST -->
+<div class="section">
+  <div class="section-label">Projection</div>
+  <h2>Forecast</h2>
+  <div class="section-sub">Will they hit the target if nothing changes? Simple math. Never guesses.</div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0;">
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 10px; padding: 20px; border-left: 4px solid #00695c;">
+      <div style="font-size: 11px; font-weight: 700; color: #00695c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Static Gap (AP, SAT)</div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 10px;">GAP = TARGET &minus; CURRENT</div>
+      <div style="font-size: 10px; color: #555; line-height: 1.8;">
+        AP: target = 4, current = predicted score<br>
+        SAT: target = 1500/1350, current = latest practice<br>
+        Gap &le; 0 → on target. Gap > 0 → intervention needed.
+      </div>
+    </div>
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 10px; padding: 20px; border-left: 4px solid #7b1fa2;">
+      <div style="font-size: 11px; font-weight: 700; color: #7b1fa2; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Pacing Math (Mastery, Credits)</div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 10px;">NEEDED / DAY &gt; GOAL / DAY → behind</div>
+      <div style="font-size: 10px; color: #555; line-height: 1.8;">
+        Credits: XP remaining &divide; days remaining vs. daily goal<br>
+        Mastery: grades remaining &divide; days &divide; 14 days/grade<br>
+        Ratio &le; 1.0 → on pace. Ratio > 1.5 → critical.
+      </div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0;">
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 8px; padding: 14px; text-align: center;">
+      <div style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #2e7d32;">Sure</div>
+      <div style="font-size: 9px; color: #888; margin-top: 4px;">3+ data points<br>Clear trend</div>
+    </div>
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 8px; padding: 14px; text-align: center;">
+      <div style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #0277bd;">Likely</div>
+      <div style="font-size: 9px; color: #888; margin-top: 4px;">2 data points<br>Trend visible</div>
+    </div>
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 8px; padding: 14px; text-align: center;">
+      <div style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #e65100;">Possible</div>
+      <div style="font-size: 9px; color: #888; margin-top: 4px;">1 data point<br>Weak signal</div>
+    </div>
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 8px; padding: 14px; text-align: center;">
+      <div style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #c62828;">Insufficient</div>
+      <div style="font-size: 9px; color: #888; margin-top: 4px;">Zero data<br>Cannot forecast</div>
+    </div>
+  </div>
+
+  <div class="note">
+    Forecast is arithmetic. Deterministic. Same inputs → same output. Says "insufficient" when it can't compute. The operator sees: <strong>gap magnitude + confidence + effort needed</strong> — one sentence per grain.
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ACTION TIERS -->
+<div class="section">
+  <div class="section-label">Response</div>
+  <h2>Three Action Tiers</h2>
+  <div class="section-sub">Pre-approved whitelist. Templates only. Every action tracked to outcome.</div>
+
+  <div class="tiers">
+    <div class="tier-card" style="border-top-color: #2e7d32;">
+      <div class="tc-name">Tier 1: Auto</div>
+      <div class="tc-desc">System does silently. No human.</div>
+      <ul>
+        <li>Generate daily report</li>
+        <li>Log detection events</li>
+        <li>Update forecasts</li>
+        <li>Flag for review</li>
+      </ul>
+    </div>
+    <div class="tier-card" style="border-top-color: #e65100;">
+      <div class="tc-name">Tier 2: Notify</div>
+      <div class="tc-desc">Send pre-approved template.</div>
+      <ul>
+        <li>Motivation alert → Chris</li>
+        <li>Placement suggestion → DRI</li>
+        <li>Curriculum handover → DRI</li>
+        <li>Critical alert → Hari</li>
+      </ul>
+    </div>
+    <div class="tier-card" style="border-top-color: #c62828;">
+      <div class="tc-name">Tier 3: Recommend</div>
+      <div class="tc-desc">System suggests. Hari decides.</div>
+      <ul>
+        <li>Assign practice test</li>
+        <li>Modify placement</li>
+        <li>Escalate to Andy</li>
+        <li>Change phase / target</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Action lifecycle -->
+  <div style="margin-top: 32px;">
+    <div style="font-size: 11px; font-weight: 600; margin-bottom: 12px; color: #555;">Action Lifecycle</div>
+    <div class="lifecycle">
+      <div class="lc-step">
+        <div class="lc-name">Triggered</div>
+        <div class="lc-desc">Condition met</div>
+      </div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-step">
+        <div class="lc-name">Queued</div>
+        <div class="lc-desc">Logged</div>
+      </div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-step">
+        <div class="lc-name">Executed</div>
+        <div class="lc-desc">Sent / done</div>
+      </div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-step">
+        <div class="lc-name">Tracked</div>
+        <div class="lc-desc">1-3 cycles</div>
+      </div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-step" style="border-color: #2e7d32;">
+        <div class="lc-name">Outcome</div>
+        <div class="lc-desc">improved / no change / declined</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top: 12px;">3 cycles with no change → escalate. Every intervention tracked. Closed-loop.</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- DAILY REPORT -->
+<div class="section">
+  <div class="section-label">Output</div>
+  <h2>Daily Report</h2>
+  <div class="section-sub">The operator's morning briefing. Scan in 5 minutes. Act on red. Move on.</div>
+
+  <div class="report-mock">
+    <div class="rm-header">
+      <div class="rm-title">ARGUS</div>
+      <div class="rm-date">Monday, Sep 15 2026 &nbsp;|&nbsp; Week 6 of AY</div>
+    </div>
+
+    <div class="rm-headline">
+      <div class="hl-label">Headline</div>
+      <div class="hl-text">SAT Oct 12: 27 days. 23/38 on track. 15 need work.</div>
+    </div>
+
+    <div class="rm-section">
+      <div class="rm-section-label" style="color: #c62828;">&#9632; Critical &mdash; act today (2)</div>
+      <div class="rm-item" style="border-color: #c62828;">
+        <div class="ri-name">Marcus Chen &bull; SAT Math &bull; NO_BASELINE</div>
+        <div class="ri-detail">Confirmed Oct 12. Zero practice tests taken. Cannot forecast.</div>
+        <div class="ri-action" style="color: #c62828;">→ Schedule practice test TODAY</div>
+      </div>
+      <div class="rm-item" style="border-color: #c62828;">
+        <div class="ri-name">Reece Knight &bull; Math G5 &bull; STUCK + IDLE</div>
+        <div class="ri-detail">3 fails (72%, 68%, 71%). No attempt in 14 days.</div>
+        <div class="ri-action" style="color: #c62828;">→ Guide meeting + review content gap</div>
+      </div>
+    </div>
+
+    <div class="rm-section">
+      <div class="rm-section-label" style="color: #e65100;">&#9632; Off track &mdash; needs intervention (8)</div>
+      <div class="rm-item" style="border-color: #e65100;">
+        <div class="ri-name">Jackson Price &bull; AP Chem &bull; MOTIVATION &bull; Gap: 2</div>
+        <div class="ri-detail">Inactive 18 days. MCQ 60%. FRQ 8%.</div>
+      </div>
+      <div class="rm-item" style="border-color: #e65100;">
+        <div class="ri-name">Austin Lin &bull; AP Bio &bull; CURRICULUM &bull; Gap: 1</div>
+        <div class="ri-detail">Active (51 questions/wk) but MCQ stuck at 53%.</div>
+      </div>
+      <div style="font-size: 10px; color: #999; padding-left: 15px; margin-top: 4px;">+ 6 more (see dashboard)</div>
+    </div>
+
+    <div class="rm-section">
+      <div class="rm-section-label" style="color: #2e7d32;">&#9632; On track &mdash; 147 grains. No action.</div>
+    </div>
+
+    <div class="rm-section">
+      <div class="rm-section-label" style="color: #555;">&#9632; Last cycle outcomes</div>
+      <div style="font-size: 10px; color: #444; line-height: 2;">
+        &#10003; Emma W. &mdash; motivation alert sent Sep 8 → active again, +20 pts<br>
+        &#8776; Dev P. &mdash; practice test assigned Sep 9 → engaging, no score yet (cycle 2)<br>
+        &#10007; Aiden B. &mdash; accountability convo Sep 1 → no change (cycle 3) → <strong>ESCALATE?</strong>
+      </div>
+    </div>
+
+    <div class="rm-footer">Data as of: Sep 14, 23:45 &nbsp;|&nbsp; Next cycle: Mon Sep 22 &nbsp;|&nbsp; Active grains: 187</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PRINCIPLES -->
+<div class="section">
+  <div class="section-label">Constraints</div>
+  <h2>Design Principles</h2>
+  <div class="section-sub">Non-negotiable. These define what Argus is and isn't.</div>
+
+  <div class="principles">
+    <div class="principle">
+      <div class="pr-num">1</div>
+      <div class="pr-name">Deterministic</div>
+      <div class="pr-desc">Same inputs, same output. No black boxes.</div>
+    </div>
+    <div class="principle">
+      <div class="pr-num">2</div>
+      <div class="pr-name">Actionable</div>
+      <div class="pr-desc">Every signal maps to a concrete action.</div>
+    </div>
+    <div class="principle">
+      <div class="pr-num">3</div>
+      <div class="pr-name">Tracked</div>
+      <div class="pr-desc">Every intervention → outcome. Closed-loop.</div>
+    </div>
+    <div class="principle">
+      <div class="pr-num">4</div>
+      <div class="pr-name">Accurate</div>
+      <div class="pr-desc">Says "insufficient" rather than guessing.</div>
+    </div>
+    <div class="principle">
+      <div class="pr-num">5</div>
+      <div class="pr-name">Simple Math</div>
+      <div class="pr-desc">Arithmetic, not ML. One-sentence explainable.</div>
+    </div>
+    <div class="principle">
+      <div class="pr-num">6</div>
+      <div class="pr-name">Pre-approved</div>
+      <div class="pr-desc">Whitelist only. Templates only. Never freeform.</div>
+    </div>
+    <div class="principle">
+      <div class="pr-num">7</div>
+      <div class="pr-name">Lazy-Friendly</div>
+      <div class="pr-desc">5-min scan. Report tells you what to do.</div>
+    </div>
+    <div class="principle">
+      <div class="pr-num">8</div>
+      <div class="pr-name">Phase-Specific</div>
+      <div class="pr-desc">Each phase has its own rules. No one-size-fits-all.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- OPERATIONS -->
+<div class="section">
+  <div class="section-label">Cadence</div>
+  <h2>Operations</h2>
+  <div class="section-sub">When Argus runs. What the operator does.</div>
+
+  <div class="calendar">
+    <div class="cal-month">
+      <div class="cm-name">Aug</div>
+      <div class="cm-phases">
+        <div class="cm-dot" style="background: #5c6bc0;" title="Onboard"></div>
+        <div class="cm-dot" style="background: #7b1fa2;" title="Mastery"></div>
+        <div class="cm-dot" style="background: #4e342e;" title="Credits"></div>
+      </div>
+    </div>
+    <div class="cal-month">
+      <div class="cm-name">Sep-Oct</div>
+      <div class="cm-phases">
+        <div class="cm-dot" style="background: #7b1fa2;" title="Mastery"></div>
+        <div class="cm-dot" style="background: #0277bd;" title="SAT"></div>
+        <div class="cm-dot" style="background: #4e342e;" title="Credits"></div>
+      </div>
+    </div>
+    <div class="cal-month">
+      <div class="cm-name">Nov-Dec</div>
+      <div class="cm-phases">
+        <div class="cm-dot" style="background: #7b1fa2;" title="Mastery"></div>
+        <div class="cm-dot" style="background: #0277bd;" title="SAT"></div>
+        <div class="cm-dot" style="background: #4e342e;" title="Credits"></div>
+      </div>
+    </div>
+    <div class="cal-month">
+      <div class="cm-name">Jan-Mar</div>
+      <div class="cm-phases">
+        <div class="cm-dot" style="background: #7b1fa2;" title="Mastery"></div>
+        <div class="cm-dot" style="background: #0277bd;" title="SAT"></div>
+        <div class="cm-dot" style="background: #00695c;" title="AP"></div>
+        <div class="cm-dot" style="background: #4e342e;" title="Credits"></div>
+      </div>
+    </div>
+    <div class="cal-month">
+      <div class="cm-name">Apr-May</div>
+      <div class="cm-phases">
+        <div class="cm-dot" style="background: #0277bd;" title="SAT"></div>
+        <div class="cm-dot" style="background: #00695c;" title="AP"></div>
+        <div class="cm-dot" style="background: #4e342e;" title="Credits"></div>
+      </div>
+    </div>
+    <div class="cal-month">
+      <div class="cm-name">Jun</div>
+      <div class="cm-phases">
+        <div class="cm-dot" style="background: #0277bd;" title="SAT"></div>
+        <div class="cm-dot" style="background: #4e342e;" title="Credits"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 24px;">
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 8px; padding: 16px; text-align: center;">
+      <div style="font-size: 20px; font-weight: 800; color: #1a1a1a;">Mon</div>
+      <div style="font-size: 10px; color: #888; margin-top: 4px;">Weekly Pulse</div>
+      <div style="font-size: 9px; color: #bbb; margin-top: 2px;">Full run. 6 AM.</div>
+    </div>
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 8px; padding: 16px; text-align: center;">
+      <div style="font-size: 20px; font-weight: 800; color: #e65100;">Daily</div>
+      <div style="font-size: 10px; color: #888; margin-top: 4px;">Crunch Scan</div>
+      <div style="font-size: 9px; color: #bbb; margin-top: 2px;">Inactivity check only.</div>
+    </div>
+    <div style="background: white; border: 1px solid #e8e8e4; border-radius: 8px; padding: 16px; text-align: center;">
+      <div style="font-size: 20px; font-weight: 800; color: #7b1fa2;">1st</div>
+      <div style="font-size: 10px; color: #888; margin-top: 4px;">Monthly Review</div>
+      <div style="font-size: 9px; color: #bbb; margin-top: 2px;">Patterns + trends.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  ARGUS &nbsp;&mdash;&nbsp; INTELLIGENT ACADEMIC YEAR SYSTEM &nbsp;&mdash;&nbsp; V2 SPEC &nbsp;&mdash;&nbsp; MAY 2026
+</div>
+
+</body>
+</html>
