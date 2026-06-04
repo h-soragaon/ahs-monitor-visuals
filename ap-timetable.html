@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AP Exam Timetable — May 2026</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #FAFAF7;
+    color: #1a1a1a;
+    padding: 32px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.subtitle {
+    font-size: 13px;
+    color: #6b6b6b;
+    margin-bottom: 24px;
+}
+.kpi-strip {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.kpi {
+    background: #fff;
+    border: 1px solid #e5e5e0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    min-width: 140px;
+}
+.kpi .value {
+    font-size: 28px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+.kpi .label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b6b6b;
+    margin-top: 2px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #e5e5e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+thead th {
+    background: #f5f5f2;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b6b6b;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e0;
+}
+tbody tr {
+    border-bottom: 1px solid #e5e5e0;
+}
+tbody tr:last-child {
+    border-bottom: none;
+}
+tbody tr:hover {
+    background: #f9f9f6;
+}
+tbody tr.today {
+    background: #f0f4ff;
+}
+tbody tr.today:hover {
+    background: #e8edff;
+}
+td {
+    padding: 14px 16px;
+    vertical-align: top;
+}
+.date-col {
+    width: 160px;
+    white-space: nowrap;
+}
+.date-col .day {
+    font-size: 13px;
+    font-weight: 500;
+}
+.date-col .time {
+    font-size: 12px;
+    color: #6b6b6b;
+}
+.course-col {
+    width: 280px;
+}
+.course-col .course-name {
+    font-size: 13px;
+    font-weight: 500;
+}
+.course-col .window {
+    font-size: 11px;
+    color: #6b6b6b;
+    margin-top: 2px;
+}
+.students-col .student-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.students-col .count {
+    font-size: 11px;
+    color: #6b6b6b;
+    margin-top: 8px;
+}
+.student {
+    display: inline-block;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #f0f0ed;
+    color: #1a1a1a;
+}
+.student.questionable {
+    background: #fff3e0;
+    color: #b36b00;
+}
+.legend {
+    margin-top: 16px;
+    font-size: 12px;
+    color: #6b6b6b;
+    display: flex;
+    gap: 16px;
+}
+.legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.legend .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    display: inline-block;
+}
+.legend .dot.confirmed { background: #f0f0ed; }
+.legend .dot.questionable { background: #fff3e0; }
+.generated {
+    margin-top: 24px;
+    font-size: 11px;
+    color: #999;
+}
+</style>
+</head>
+<body>
+<h1>AP Exam Timetable</h1>
+<p class="subtitle">May 2026 — Confirmed and Questionable students</p>
+
+<div class="kpi-strip">
+    <div class="kpi">
+        <div class="value">46</div>
+        <div class="label">Students</div>
+    </div>
+    <div class="kpi">
+        <div class="value">95</div>
+        <div class="label">Exam Sittings</div>
+    </div>
+    <div class="kpi">
+        <div class="value">15</div>
+        <div class="label">Courses</div>
+    </div>
+    <div class="kpi">
+        <div class="value">May 4–15</div>
+        <div class="label">Testing Window</div>
+    </div>
+</div>
+
+<table>
+<thead>
+    <tr>
+        <th>Date & Time</th>
+        <th>Exam</th>
+        <th>Students</th>
+    </tr>
+</thead>
+<tbody>
+
+        <tr class="today">
+            <td class="date-col">
+                <div class="day">Monday, May 4</div>
+                <div class="time">8:00 AM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP Biology</div>
+                <div class="window">Std - Hybrid</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student questionable">Alexander Mathew</span><span class="student confirmed">Austin Lin</span><span class="student confirmed">Emma Cotner</span><span class="student confirmed">Grady Swanson</span><span class="student confirmed">Jaiden Bhakta</span><span class="student confirmed">Michael Cai</span><span class="student confirmed">Vera Li</span>
+                </div>
+                <div class="count">7 students</div>
+            </td>
+        </tr>
+        <tr class="today">
+            <td class="date-col">
+                <div class="day">Monday, May 4</div>
+                <div class="time">12:00 PM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP Microeconomics</div>
+                <div class="window">Std - Hybrid</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student confirmed">Ananya Kakarlapudi</span><span class="student confirmed">Emily Smith</span><span class="student confirmed">Estella Estrada</span>
+                </div>
+                <div class="count">3 students</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Tuesday, May 5</div>
+                <div class="time">8:00 AM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP Chemistry</div>
+                <div class="window">Std - Hybrid</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student confirmed">Ella Dietz</span><span class="student confirmed">Ella Gremont</span><span class="student confirmed">Geetesh Parelly</span><span class="student confirmed">Jackson Price</span><span class="student confirmed">Patricia Margain</span><span class="student confirmed">Sloka Vudumu</span>
+                </div>
+                <div class="count">6 students</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Tuesday, May 5</div>
+                <div class="time">8:00 AM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP Human Geography</div>
+                <div class="window">Std - Digital</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student confirmed">Adrienne Laswell</span><span class="student confirmed">Aheli Shah</span><span class="student confirmed">Ali Romman</span><span class="student confirmed">August Castillo</span><span class="student confirmed">Austin Lin</span><span class="student confirmed">Benjamin Valles</span><span class="student confirmed">Boris Dudarev</span><span class="student confirmed">Branson Pfiester</span><span class="student confirmed">Erika Rigby</span><span class="student confirmed">Evan Klein</span><span class="student confirmed">Grady Swanson</span><span class="student confirmed">Greyson Walker</span><span class="student confirmed">Jacob Kuchinsky</span><span class="student confirmed">Jaiden Bhakta</span><span class="student confirmed">Jessica Owenby</span><span class="student confirmed">Luca Sanchez</span><span class="student confirmed">Sydney Barba</span><span class="student confirmed">Vera Li</span><span class="student confirmed">Zayen Szpitalak</span>
+                </div>
+                <div class="count">19 students</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Tuesday, May 5</div>
+                <div class="time">12:00 PM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP United States Government and Politics</div>
+                <div class="window">Std - Digital</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student confirmed">Emily Smith</span><span class="student confirmed">Estella Estrada</span><span class="student questionable">Madelena Price</span>
+                </div>
+                <div class="count">3 students</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Wednesday, May 6</div>
+                <div class="time">8:00 AM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP English Literature and Composition</div>
+                <div class="window">Std - Digital</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student questionable">Alexander Mathew</span><span class="student questionable">Emily Smith</span><span class="student questionable">Madelena Price</span><span class="student confirmed">Reuben Runacres</span>
+                </div>
+                <div class="count">4 students</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Wednesday, May 6</div>
+                <div class="time">12:00 PM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP Physics 1</div>
+                <div class="window">Std - Hybrid</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student confirmed">Austin Way</span><span class="student confirmed">Jackson Price</span><span class="student confirmed">Jeremy Wang</span><span class="student questionable">Madelena Price</span><span class="student confirmed">Sara Way</span><span class="student confirmed">Walter Saunders</span>
+                </div>
+                <div class="count">6 students</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Thursday, May 7</div>
+                <div class="time">8:00 AM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP World History: Modern</div>
+                <div class="window">Std - Digital</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student confirmed">Ella Dietz</span><span class="student confirmed">Emma Cotner</span><span class="student confirmed">Jackson Price</span><span class="student questionable">Kavin Lingham</span><span class="student questionable">Liam Lenhardt</span><span class="student confirmed">Michael Cai</span><span class="student confirmed">Said Tarawneh</span><span class="student confirmed">Stella Cole</span><span class="student confirmed">Stella Grams</span>
+                </div>
+                <div class="count">9 students</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Thursday, May 7</div>
+                <div class="time">12:00 PM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP Statistics</div>
+                <div class="window">Std - Hybrid</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student confirmed">Reuben Runacres</span>
+                </div>
+                <div class="count">1 student</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Friday, May 8</div>
+                <div class="time">8:00 AM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP United States History</div>
+                <div class="window">Std - Digital</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student confirmed">Aidan Wong</span><span class="student confirmed">Ananya Kakarlapudi</span><span class="student confirmed">Austin Way</span><span class="student confirmed">Caleb Walker</span><span class="student confirmed">Ella Gremont</span><span class="student confirmed">Geetesh Parelly</span><span class="student confirmed">Jeremy Wang</span><span class="student confirmed">Madeleine Grams</span><span class="student confirmed">Patricia Margain</span><span class="student confirmed">Sara Way</span><span class="student confirmed">Sloka Vudumu</span><span class="student confirmed">Walter Saunders</span>
+                </div>
+                <div class="count">12 students</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Monday, May 11</div>
+                <div class="time">8:00 AM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP Calculus BC</div>
+                <div class="window">Std - Hybrid</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student questionable">Alexander Mathew</span><span class="student confirmed">Ananya Kakarlapudi</span>
+                </div>
+                <div class="count">2 students</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Tuesday, May 12</div>
+                <div class="time">12:00 PM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP Psychology</div>
+                <div class="window">Std - Digital</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student questionable">Alexander Mathew</span><span class="student confirmed">Ananya Kakarlapudi</span><span class="student questionable">Aoife Huey</span><span class="student confirmed">Jeremy Wang</span><span class="student confirmed">Patricia Margain</span><span class="student confirmed">Reuben Runacres</span><span class="student confirmed">Vera Li</span>
+                </div>
+                <div class="count">7 students</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Wednesday, May 13</div>
+                <div class="time">8:00 AM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP English Language and Composition</div>
+                <div class="window">Std - Digital</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student confirmed">Aidan Wong</span><span class="student confirmed">Ananya Kakarlapudi</span><span class="student confirmed">Austin Way</span><span class="student confirmed">Caleb Walker</span><span class="student confirmed">Ella Gremont</span><span class="student confirmed">Geetesh Parelly</span><span class="student confirmed">Jeremy Wang</span><span class="student confirmed">Madeleine Grams</span><span class="student confirmed">Patricia Margain</span><span class="student confirmed">Sara Way</span><span class="student confirmed">Sloka Vudumu</span><span class="student confirmed">Walter Saunders</span>
+                </div>
+                <div class="count">12 students</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Friday, May 15</div>
+                <div class="time">8:00 AM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP Environmental Science</div>
+                <div class="window">Std - Digital</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student confirmed">Caleb Walker</span>
+                </div>
+                <div class="count">1 student</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="date-col">
+                <div class="day">Friday, May 15</div>
+                <div class="time">12:00 PM</div>
+            </td>
+            <td class="course-col">
+                <div class="course-name">AP Computer Science A</div>
+                <div class="window">Std - Digital</div>
+            </td>
+            <td class="students-col">
+                <div class="student-list">
+                    <span class="student confirmed">Evan Klein</span><span class="student confirmed">Jackson Price</span><span class="student confirmed">Jacob Kuchinsky</span>
+                </div>
+                <div class="count">3 students</div>
+            </td>
+        </tr>
+</tbody>
+</table>
+
+<div class="legend">
+    <span><span class="dot confirmed"></span> Confirmed</span>
+    <span><span class="dot questionable"></span> Questionable</span>
+</div>
+
+<p class="generated">Generated 2026-05-04 08:30</p>
+</body>
+</html>
