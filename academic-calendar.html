@@ -6,256 +6,226 @@
 <title>AHS Academic Calendar 2025-27</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #FAFAF7;
-  color: #1a1a1a;
-  line-height: 1.5;
-  min-height: 100vh;
-}
+:root {
+  --bg:#fafaf7;
+  --panel:#ffffff;
+  --panel-alt:#fcfcfa;
+  --ink:#1a1a1f;
+  --muted:#6b6b76;
+  --faint:#a1a1aa;
+  --line:#ececea;
+  --line-soft:#f4f4f2;
+  --line-strong:#dcdcd8;
+  --zero:#c8c8c8;
+  --accent: oklch(0.52 0.13 265);
+  --accent-soft: oklch(0.96 0.02 265);
 
-/* Layout */
-.app { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  /* harmonized session palette — equal chroma/lightness, hue varies */
+  --s1: oklch(0.55 0.13 265);   /* indigo  */
+  --s2: oklch(0.55 0.13 305);   /* violet  */
+  --s3: oklch(0.6 0.11 215);    /* blue    */
+  --s4: oklch(0.6 0.12 155);    /* green   */
+  --s5: oklch(0.66 0.12 80);    /* amber   */
 
-/* Header */
-.header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e8e8e4;
+  /* event palette — soft tinted blocks, reuse AP-score family */
+  --apexam-chip: oklch(0.58 0.16 25);
+  --appr-bg: oklch(0.97 0.035 25); --appr-bd: oklch(0.88 0.06 25); --appr-fg: oklch(0.5 0.14 25);
+  --satoff-chip: oklch(0.66 0.13 60);
+  --satpr-bg: oklch(0.975 0.04 95); --satpr-bd: oklch(0.88 0.06 95); --satpr-fg: oklch(0.52 0.1 80);
+  --holiday-bg: oklch(0.965 0.045 95); --holiday-tint: oklch(0.98 0.025 95);
+  --break-bg:#f3f3f0; --break-bd:#e2e2dd; --break-fg:#7c7c84;
+  --neutral-bg:#f1f1ee; --neutral-bd:#e4e4df; --neutral-fg:#5f5f68;
 }
-.header h1 { font-size: 22px; font-weight: 700; color: #2c3e50; letter-spacing: -0.5px; }
-.header .subtitle { font-size: 12px; color: #7f8c8d; margin-top: 2px; }
+* { box-sizing:border-box; }
+html, body { margin:0; padding:0; min-height:100%; background:var(--bg); }
+body { font-family:'Inter', -apple-system, system-ui, sans-serif; color:var(--ink); }
 
-/* Toolbar */
-.toolbar {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 20px; gap: 12px;
-}
-.toolbar-left { display: flex; align-items: center; gap: 10px; }
-.toolbar-right { display: flex; align-items: center; gap: 8px; }
+.page { padding:20px 36px 24px; max-width:1320px; margin:0 auto; }
 
-.btn {
-  padding: 6px 14px; border: 1px solid #e0e0e0; border-radius: 6px;
-  background: white; font-size: 12px; font-weight: 500; color: #555;
-  cursor: pointer; transition: all 0.15s;
-}
-.btn:hover { border-color: #6366f1; color: #6366f1; }
-.btn-primary { background: #6366f1; color: white; border-color: #6366f1; }
-.btn-primary:hover { background: #4f46e5; }
+h1.title { font-size:22px; font-weight:600; margin:0 0 3px; letter-spacing:-0.015em; }
+p.sub { font-size:12.5px; color:var(--muted); margin:0 0 14px; }
+.rule { height:1px; background:var(--line); margin:0 0 16px; }
 
-.nav-arrow {
-  width: 28px; height: 28px; border: 1px solid #e0e0e0; border-radius: 6px;
-  background: white; font-size: 14px; color: #666; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; transition: all 0.15s;
-}
-.nav-arrow:hover { border-color: #6366f1; color: #6366f1; }
+/* KPI strip */
+.kpi-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; margin-bottom:16px; }
+.stat { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 18px; }
+.stat .num { font-size:26px; font-weight:600; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; line-height:1.05; }
+.stat .num small { font-size:16px; color:var(--faint); font-weight:500; }
+.stat .lbl { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.07em; font-weight:500; margin-top:8px; }
+.stat.hero { background:var(--ink); color:#fafaf7; border-color:var(--ink); }
+.stat.hero .num { font-size:24px; }
+.stat.hero .lbl { color:#9b9ba5; }
+.stat.milestone .num { font-size:19px; font-weight:600; letter-spacing:-0.01em; line-height:1.2;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-.month-title { font-size: 18px; font-weight: 600; color: #2c3e50; min-width: 180px; }
+/* toolbar */
+.toolbar { display:flex; align-items:center; gap:14px; margin-bottom:12px; flex-wrap:wrap; }
+.btn { font-family:inherit; border:1px solid var(--line-strong); background:var(--panel); color:var(--ink); font-size:13px; font-weight:500; border-radius:8px; padding:8px 14px; cursor:pointer; transition:border-color 0.15s, color 0.15s; }
+.btn:hover { border-color:var(--accent); color:var(--accent); }
+.btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+.btn.primary:hover { color:#fff; filter:brightness(1.05); }
+.btn.icon { width:36px; height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center; font-size:16px; color:var(--muted); }
+.nav-group { display:flex; gap:6px; }
+.period { font-size:20px; font-weight:600; letter-spacing:-0.01em; margin:0 4px; min-width:230px; }
+.ctx-pill { font-size:11px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:5px 11px; border-radius:6px; background:var(--break-fg); color:#fff; }
+.ctx-pill.s1 { background:var(--s1); } .ctx-pill.s2 { background:var(--s2); } .ctx-pill.s3 { background:var(--s3); }
+.ctx-pill.s4 { background:var(--s4); } .ctx-pill.s5 { background:var(--s5); }
+.ctx-pill.break { background:var(--break-fg); }
+.spacer { flex:1; }
 
-.view-toggle { display: flex; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; }
-.view-toggle button {
-  padding: 6px 14px; border: none; background: white; font-size: 11px;
-  font-weight: 500; color: #666; cursor: pointer; transition: all 0.15s;
-}
-.view-toggle button + button { border-left: 1px solid #e0e0e0; }
-.view-toggle button.active { background: #6366f1; color: white; }
+.seg { display:flex; gap:2px; background:var(--line); padding:3px; border-radius:8px; font-size:12px; }
+.seg button { border:none; background:transparent; padding:6px 14px; border-radius:6px; cursor:pointer; color:var(--muted); font-family:inherit; font-weight:500; font-variant-numeric:tabular-nums; }
+.seg button.on { background:var(--panel); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,0.06); }
+select.month-sel { font-family:inherit; font-size:13px; font-weight:500; color:var(--ink); border:1px solid var(--line-strong); background:var(--panel); border-radius:8px; padding:8px 12px; cursor:pointer; }
 
-/* Session badge in toolbar */
-.session-badge {
-  font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 4px;
-  text-transform: uppercase; letter-spacing: 0.5px;
-}
+/* status banner (loading / error) */
+.status-banner { margin-bottom:18px; padding:11px 15px; border-radius:10px; font-size:13px; border:1px solid; line-height:1.5; }
+.status-banner code { background:rgba(0,0,0,0.05); padding:1px 5px; border-radius:4px; font-size:12px; }
+.status-banner.loading { background:var(--panel-alt); border-color:var(--line); color:var(--muted); }
+.status-banner.error { background:var(--appr-bg); border-color:var(--appr-bd); color:var(--appr-fg); }
 
-/* Month Grid */
-.month-grid {
-  display: grid; grid-template-columns: repeat(7, 1fr);
-  border: 1px solid #e8e8e4; border-radius: 10px; overflow: hidden;
-  background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.day-header {
-  padding: 10px 8px; text-align: center; font-size: 10px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 1px; color: #999;
-  background: #fafaf7; border-bottom: 1px solid #e8e8e4;
-}
-.day-cell {
-  min-height: 90px; padding: 6px 8px; border-bottom: 1px solid #f0f0ec;
-  border-right: 1px solid #f0f0ec; position: relative; cursor: pointer;
-  transition: background 0.1s;
-}
-.day-cell:hover { background: #f8f8f5; }
-.day-cell:nth-child(7n) { border-right: none; }
-.day-cell.weekend { background: #fafaf8; }
-.day-cell.other-month { opacity: 0.3; }
-.day-cell.today { box-shadow: inset 0 0 0 2px #6366f1; border-radius: 2px; }
-.day-cell.holiday { background: #fffbeb; }
-.day-cell.break { background: #f5f5f0; }
+/* calendar shell */
+.cal { background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
 
-/* Session left strip */
-.day-cell.session-1 { border-left: 3px solid #6366f1; }
-.day-cell.session-2 { border-left: 3px solid #8b5cf6; }
-.day-cell.session-3 { border-left: 3px solid #06b6d4; }
-.day-cell.session-4 { border-left: 3px solid #10b981; }
-.day-cell.session-5 { border-left: 3px solid #f59e0b; }
+/* ===== MONTH ===== */
+.dow { display:grid; grid-template-columns:repeat(7,1fr); background:var(--panel-alt); border-bottom:1px solid var(--line); }
+.dow > div { padding:9px 16px; font-size:11px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:0.08em; }
+.grid { display:grid; grid-template-columns:repeat(7,1fr); }
+.cell { min-height:90px; border-right:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); padding:8px 10px 8px 12px; position:relative; cursor:pointer; transition:background 0.1s; }
+.cell:hover { background:var(--panel-alt); }
+.cell:nth-child(7n) { border-right:none; }
+.grid > .cell:nth-last-child(-n+7) { border-bottom:none; }
+.cell .sbar { position:absolute; left:0; top:0; bottom:0; width:4px; }
+.cell.s1 .sbar{background:var(--s1);} .cell.s2 .sbar{background:var(--s2);} .cell.s3 .sbar{background:var(--s3);} .cell.s4 .sbar{background:var(--s4);} .cell.s5 .sbar{background:var(--s5);}
+.cell.brk { background:var(--break-bg); }
+.cell.wknd { background:var(--panel-alt); }
+.cell.brk.wknd { background:var(--break-bg); }
+.cell.today { box-shadow: inset 0 0 0 2px var(--accent); }
+.cell .dn { font-size:13px; font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums; }
+.cell.today .dn { color:var(--accent); }
+.cell.other .dn { color:var(--zero); font-weight:500; }
+.cell .evs { margin-top:5px; display:flex; flex-direction:column; gap:3px; }
+.chip { font-size:10.5px; font-weight:500; line-height:1.25; padding:3px 7px; border-radius:5px; border:1px solid transparent; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.chip.apexam { background:var(--apexam-chip); color:#fff; }
+.chip.appr { background:var(--appr-bg); border-color:var(--appr-bd); color:var(--appr-fg); }
+.chip.satoff { background:var(--satoff-chip); color:#fff; }
+.chip.satpr { background:var(--satpr-bg); border-color:var(--satpr-bd); color:var(--satpr-fg); }
+.chip.holiday { background:var(--holiday-bg); border-color:oklch(0.86 0.06 95); color:var(--satpr-fg); }
+.chip.brk { background:#eceae5; border-color:var(--break-bd); color:var(--break-fg); }
+.chip.neutral { background:var(--neutral-bg); border-color:var(--neutral-bd); color:var(--neutral-fg); }
+.chip.session { background:var(--accent-soft); border-color:oklch(0.9 0.04 265); color:var(--accent); }
 
-.day-num {
-  font-size: 12px; font-weight: 500; color: #2c3e50; margin-bottom: 4px;
-}
-.day-cell.weekend .day-num { color: #aaa; }
-.day-cell.today .day-num {
-  background: #6366f1; color: white; width: 22px; height: 22px;
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600;
-}
+/* ===== WEEK ===== */
+.weekmeta { display:flex; gap:26px; padding:14px 18px; border-bottom:1px solid var(--line); background:var(--panel-alt); font-size:12.5px; color:var(--muted); flex-wrap:wrap; }
+.weekmeta b { color:var(--ink); font-weight:600; }
+.weekgrid { display:grid; grid-template-columns:repeat(7,1fr); }
+.wcol { border-right:1px solid var(--line-soft); min-height:440px; display:flex; flex-direction:column; }
+.wcol:nth-child(7) { border-right:none; }
+.wcol.holiday { background:var(--holiday-tint); }
+.wcol.brk { background:var(--break-bg); }
+.wcol.today { box-shadow: inset 0 0 0 2px var(--accent); }
+.wcol .whd { text-align:center; padding:14px 8px 10px; border-bottom:1px solid var(--line-soft); }
+.wcol .wdow { font-size:11px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:0.08em; }
+.wcol .wnum { font-size:30px; font-weight:600; letter-spacing:-0.02em; margin-top:4px; font-variant-numeric:tabular-nums; }
+.wcol.today .wnum { color:var(--accent); }
+.wcol.dim .wnum, .wcol.dim .wdow { color:var(--zero); }
+.wcol .wbody { flex:1; padding:12px 10px; display:flex; flex-direction:column; gap:8px; }
+.wcol .foot { padding:10px; font-size:11px; color:var(--faint); }
+.wev { border-radius:7px; padding:9px 11px; border-left:3px solid var(--neutral-bd); background:var(--neutral-bg); }
+.wev .t { font-size:12.5px; font-weight:600; color:var(--ink); }
+.wev .d { font-size:11px; color:var(--muted); margin-top:2px; }
+.wev.apexam { background:var(--appr-bg); border-left-color:var(--apexam-chip); }
+.wev.apexam .t { color:var(--appr-fg); }
+.wev.appr { background:var(--appr-bg); border-left-color:var(--apexam-chip); }
+.wev.appr .t { color:var(--appr-fg); }
+.wev.satoff { background:var(--satpr-bg); border-left-color:var(--satoff-chip); }
+.wev.satoff .t { color:var(--satpr-fg); }
+.wev.satpr { background:var(--satpr-bg); border-left-color:var(--satpr-bd); }
+.wev.satpr .t { color:var(--satpr-fg); }
+.wev.holiday { background:var(--holiday-bg); border-left-color:oklch(0.86 0.06 95); }
+.wev.holiday .t { color:var(--satpr-fg); }
+.wev.session { background:var(--accent-soft); border-left-color:var(--accent); }
+.wev.session .t { color:var(--accent); }
+.wev.brk { background:#eceae5; border-left-color:var(--break-fg); }
+.wev.brk .t { color:var(--break-fg); }
 
-/* Event badges */
-.events { display: flex; flex-direction: column; gap: 2px; }
-.event-badge {
-  font-size: 9px; font-weight: 500; padding: 2px 5px; border-radius: 3px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  line-height: 1.3;
-}
-.event-badge.ap-exam { background: #dc2626; color: white; }
-.event-badge.ap-practice { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-.event-badge.sat-official { background: #f59e0b; color: white; }
-.event-badge.sat-practice { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
-.event-badge.note { background: #f1f5f9; color: #475569; }
-.event-badge.holiday { background: #fef3c7; color: #92400e; }
+.hidden { display:none; }
 
-/* Week View */
-.week-view { display: none; }
-.week-view.active { display: block; }
-.month-view.active { display: block; }
-.month-view { display: none; }
-
-.week-summary {
-  display: flex; gap: 20px; padding: 12px 16px; background: white;
-  border: 1px solid #e8e8e4; border-radius: 10px 10px 0 0;
-  font-size: 12px; color: #555;
-}
-.week-summary strong { color: #2c3e50; }
-
-.week-grid {
-  display: grid; grid-template-columns: repeat(7, 1fr);
-  border: 1px solid #e8e8e4; border-top: none; border-radius: 0 0 10px 10px;
-  overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.week-day {
-  min-height: 280px; padding: 12px; border-right: 1px solid #f0f0ec;
-  position: relative;
-}
-.week-day:last-child { border-right: none; }
-.week-day.weekend { background: #fafaf8; }
-.week-day.today { box-shadow: inset 0 0 0 2px #6366f1; }
-.week-day.holiday { background: #fffbeb; }
-
-.week-day-header {
-  text-align: center; margin-bottom: 12px; padding-bottom: 8px;
-  border-bottom: 1px solid #f0f0ec;
-}
-.week-day-name { font-size: 10px; font-weight: 500; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
-.week-day-num { font-size: 24px; font-weight: 600; color: #2c3e50; margin-top: 2px; }
-.week-day.today .week-day-num {
-  background: #6366f1; color: white; width: 36px; height: 36px;
-  border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-}
-.week-day.weekend .week-day-num { color: #ccc; }
-
-.week-events { display: flex; flex-direction: column; gap: 6px; }
-.week-event {
-  padding: 6px 8px; border-radius: 6px; font-size: 11px;
-}
-.week-event.ap-exam { background: #fef2f2; border-left: 3px solid #dc2626; }
-.week-event.ap-practice { background: #fef2f2; border-left: 3px solid #f87171; }
-.week-event.sat-official { background: #fffbeb; border-left: 3px solid #f59e0b; }
-.week-event.sat-practice { background: #fffbeb; border-left: 3px solid #fbbf24; }
-.week-event.note { background: #f1f5f9; border-left: 3px solid #94a3b8; }
-.week-event .event-title { font-weight: 600; color: #2c3e50; margin-bottom: 2px; }
-.week-event .event-detail { font-size: 10px; color: #666; }
-
-.week-day-meta {
-  position: absolute; bottom: 8px; left: 12px; right: 12px;
-  font-size: 9px; color: #aaa;
-}
-
-/* Legend */
-.legend {
-  display: flex; flex-wrap: wrap; gap: 14px; margin-top: 16px;
-  padding: 12px 16px; background: white; border: 1px solid #e8e8e4;
-  border-radius: 8px; font-size: 11px; color: #666;
-}
-.legend-item { display: flex; align-items: center; gap: 6px; }
-.legend-swatch {
-  width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0;
-}
-.legend-strip { width: 4px; height: 14px; border-radius: 2px; flex-shrink: 0; }
-
-/* Stats bar */
-.stats-bar {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px; margin-bottom: 20px;
-}
-.stat-card {
-  background: white; border: 1px solid #e8e8e4; border-radius: 8px;
-  padding: 12px 14px;
-}
-.stat-value { font-size: 20px; font-weight: 700; color: #2c3e50; font-variant-numeric: tabular-nums; }
-.stat-label { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+/* legend */
+.legend { display:flex; flex-wrap:wrap; align-items:center; gap:7px 18px; margin-top:14px; padding:11px 18px; background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+.lg { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); }
+.lg .swab { width:5px; height:16px; border-radius:3px; }
+.lg .box { width:18px; height:14px; border-radius:4px; border:1px solid transparent; }
+.lg .box.appr { background:var(--appr-bg); border-color:var(--appr-bd); }
+.lg .box.apexam { background:var(--apexam-chip); }
+.lg .box.satoff { background:var(--satoff-chip); }
+.lg .box.satpr { background:var(--satpr-bg); border-color:var(--satpr-bd); }
+.lg .box.holiday { background:var(--holiday-bg); border-color:oklch(0.86 0.06 95); }
+.lg .box.brk { background:#eceae5; border-color:var(--break-bd); }
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="header">
-    <div>
-      <h1>AHS Academic Calendar</h1>
-      <div class="subtitle">Alpha High School 2025-26 &amp; 2026-27 &mdash; 5 Sessions / 37 Instruction Weeks per Year</div>
-    </div>
-  </div>
+<div class="page">
+  <h1 class="title">AHS Academic Calendar</h1>
+  <p class="sub">Alpha High School 2025&ndash;26 &amp; 2026&ndash;27 &middot; 5 sessions / 37 instruction weeks per year</p>
+  <div class="rule"></div>
 
-  <div class="stats-bar" id="stats-bar"></div>
+  <div class="kpi-grid" id="stats-bar"></div>
 
   <div class="toolbar">
-    <div class="toolbar-left">
-      <button class="btn btn-primary" onclick="goToday()">Today</button>
-      <button class="nav-arrow" onclick="goPrev()">&#8249;</button>
-      <button class="nav-arrow" onclick="goNext()">&#8250;</button>
-      <span class="month-title" id="title-label"></span>
-      <span class="session-badge" id="session-badge"></span>
+    <button class="btn primary" onclick="goToday()">Today</button>
+    <div class="nav-group">
+      <button class="btn icon" onclick="goPrev()" aria-label="Previous">&#8249;</button>
+      <button class="btn icon" onclick="goNext()" aria-label="Next">&#8250;</button>
     </div>
-    <div class="toolbar-right">
-      <div class="view-toggle">
-        <button id="btn-month" class="active" onclick="setView('month')">Month</button>
-        <button id="btn-week" onclick="setView('week')">Week</button>
-      </div>
+    <span class="period" id="period"></span>
+    <span class="ctx-pill" id="ctxpill"></span>
+    <span class="spacer"></span>
+    <div class="seg" id="year-seg"></div>
+    <select class="month-sel" id="month-select" onchange="jumpToMonth(this.value)"></select>
+    <div class="seg" id="view-seg">
+      <button class="on" data-view="month" onclick="setView('month')">Month</button>
+      <button data-view="week" onclick="setView('week')">Week</button>
     </div>
   </div>
 
-  <div class="month-view active" id="month-view"></div>
-  <div class="week-view" id="week-view"></div>
+  <div id="status-banner" class="status-banner" style="display:none"></div>
+
+  <!-- MONTH -->
+  <div class="cal" id="view-month">
+    <div class="dow"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div>
+    <div class="grid" id="month-grid"></div>
+  </div>
+
+  <!-- WEEK -->
+  <div class="cal hidden" id="view-week">
+    <div class="weekmeta" id="week-meta"></div>
+    <div class="weekgrid" id="week-grid"></div>
+  </div>
 
   <div class="legend">
-    <div class="legend-item"><div class="legend-strip" style="background:#6366f1"></div> Session 1</div>
-    <div class="legend-item"><div class="legend-strip" style="background:#8b5cf6"></div> Session 2</div>
-    <div class="legend-item"><div class="legend-strip" style="background:#06b6d4"></div> Session 3</div>
-    <div class="legend-item"><div class="legend-strip" style="background:#10b981"></div> Session 4</div>
-    <div class="legend-item"><div class="legend-strip" style="background:#f59e0b"></div> Session 5</div>
-    <div class="legend-item"><div class="legend-swatch" style="background:#dc2626"></div> AP Exam</div>
-    <div class="legend-item"><div class="legend-swatch" style="background:#fef2f2;border:1px solid #fecaca"></div> AP Practice</div>
-    <div class="legend-item"><div class="legend-swatch" style="background:#f59e0b"></div> SAT Official</div>
-    <div class="legend-item"><div class="legend-swatch" style="background:#fffbeb;border:1px solid #fde68a"></div> SAT Practice</div>
-    <div class="legend-item"><div class="legend-swatch" style="background:#fef3c7"></div> Holiday / No School</div>
-    <div class="legend-item"><div class="legend-swatch" style="background:#f5f5f0"></div> Session Break</div>
+    <div class="lg"><span class="swab" style="background:var(--s1)"></span>Session 1</div>
+    <div class="lg"><span class="swab" style="background:var(--s2)"></span>Session 2</div>
+    <div class="lg"><span class="swab" style="background:var(--s3)"></span>Session 3</div>
+    <div class="lg"><span class="swab" style="background:var(--s4)"></span>Session 4</div>
+    <div class="lg"><span class="swab" style="background:var(--s5)"></span>Session 5</div>
+    <div class="lg"><span class="box apexam"></span>AP Exam / Window</div>
+    <div class="lg"><span class="box appr"></span>AP Practice</div>
+    <div class="lg"><span class="box satoff"></span>SAT Official</div>
+    <div class="lg"><span class="box satpr"></span>SAT Practice</div>
+    <div class="lg"><span class="box holiday"></span>Holiday / No School</div>
+    <div class="lg"><span class="box brk"></span>Session Break</div>
   </div>
 </div>
 
 <script>
-// Calendar data embedded
-const CAL_DATA = [{"d":"2025-08-01","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":1,"iw":0,"sdw":0,"et":""},{"d":"2025-08-02","we":true,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":1,"iw":0,"sdw":0,"et":""},{"d":"2025-08-03","we":true,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":1,"iw":0,"sdw":0,"et":""},{"d":"2025-08-04","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2025-08-05","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2025-08-06","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2025-08-07","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2025-08-08","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2025-08-09","we":true,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2025-08-10","we":true,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2025-08-11","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2025-08-12","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2025-08-13","we":false,"ses":"Session 1","sd":true,"n":"First Day of School / Session 1 Starts","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2025-08-14","we":false,"ses":"Session 1","sd":true,"n":"","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2025-08-15","we":false,"ses":"Session 1","sd":true,"n":"","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2025-08-16","we":true,"ses":"Session 1","sd":false,"n":"","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2025-08-17","we":true,"ses":"Session 1","sd":false,"n":"","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2025-08-18","we":false,"ses":"Session 1","sd":true,"n":"","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2025-08-19","we":false,"ses":"Session 1","sd":true,"n":"L1/L2/L3 MAPS Testing","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2025-08-20","we":false,"ses":"Session 1","sd":true,"n":"L1/L2/L3 MAPS Testing","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2025-08-21","we":false,"ses":"Session 1","sd":true,"n":"L1/L2/L3 MAPS Testing","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2025-08-22","we":false,"ses":"Session 1","sd":true,"n":"L1/L2/L3 MAPS Testing","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2025-08-23","we":true,"ses":"Session 1","sd":false,"n":"","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2025-08-24","we":true,"ses":"Session 1","sd":false,"n":"","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2025-08-25","we":false,"ses":"Session 1","sd":true,"n":"","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2025-08-26","we":false,"ses":"Session 1","sd":true,"n":"","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2025-08-27","we":false,"ses":"Session 1","sd":true,"n":"LL/LINC MAPS Testing","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2025-08-28","we":false,"ses":"Session 1","sd":true,"n":"LL/LINC MAPS Testing","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2025-08-29","we":false,"ses":"Session 1","sd":true,"n":"LL/LINC MAPS Testing","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2025-08-30","we":true,"ses":"Session 1","sd":false,"n":"LL/LINC MAPS Testing","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2025-08-31","we":true,"ses":"Session 1","sd":false,"n":"","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2025-09-01","we":false,"ses":"Session 1","sd":false,"n":"No School / Labour Day","cw":6,"iw":4,"sdw":4,"et":""},{"d":"2025-09-02","we":false,"ses":"Session 1","sd":true,"n":"","cw":6,"iw":4,"sdw":4,"et":""},{"d":"2025-09-03","we":false,"ses":"Session 1","sd":true,"n":"","cw":6,"iw":4,"sdw":4,"et":""},{"d":"2025-09-04","we":false,"ses":"Session 1","sd":true,"n":"","cw":6,"iw":4,"sdw":4,"et":""},{"d":"2025-09-05","we":false,"ses":"Session 1","sd":true,"n":"","cw":6,"iw":4,"sdw":4,"et":""},{"d":"2025-09-06","we":true,"ses":"Session 1","sd":false,"n":"","cw":6,"iw":4,"sdw":4,"et":""},{"d":"2025-09-07","we":true,"ses":"Session 1","sd":false,"n":"","cw":6,"iw":4,"sdw":4,"et":""},{"d":"2025-09-08","we":false,"ses":"Session 1","sd":true,"n":"","cw":7,"iw":5,"sdw":5,"et":""},{"d":"2025-09-09","we":false,"ses":"Session 1","sd":true,"n":"","cw":7,"iw":5,"sdw":5,"et":""},{"d":"2025-09-10","we":false,"ses":"Session 1","sd":true,"n":"","cw":7,"iw":5,"sdw":5,"et":""},{"d":"2025-09-11","we":false,"ses":"Session 1","sd":true,"n":"","cw":7,"iw":5,"sdw":5,"et":""},{"d":"2025-09-12","we":false,"ses":"Session 1","sd":true,"n":"","cw":7,"iw":5,"sdw":5,"et":""},{"d":"2025-09-13","we":true,"ses":"Session 1","sd":false,"n":"","cw":7,"iw":5,"sdw":5,"et":""},{"d":"2025-09-14","we":true,"ses":"Session 1","sd":false,"n":"","cw":7,"iw":5,"sdw":5,"et":""},{"d":"2025-09-15","we":false,"ses":"Session 1","sd":true,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2025-09-16","we":false,"ses":"Session 1","sd":true,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2025-09-17","we":false,"ses":"Session 1","sd":true,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2025-09-18","we":false,"ses":"Session 1","sd":true,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2025-09-19","we":false,"ses":"Session 1","sd":true,"n":"","cw":8,"iw":6,"sdw":5,"et":"sat_practice"},{"d":"2025-09-20","we":true,"ses":"Session 1","sd":false,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2025-09-21","we":true,"ses":"Session 1","sd":false,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2025-09-22","we":false,"ses":"Session 1","sd":true,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2025-09-23","we":false,"ses":"Session 1","sd":true,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2025-09-24","we":false,"ses":"Session 1","sd":true,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2025-09-25","we":false,"ses":"Session 1","sd":true,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2025-09-26","we":false,"ses":"Session 1","sd":true,"n":"","cw":9,"iw":7,"sdw":5,"et":"sat_practice"},{"d":"2025-09-27","we":true,"ses":"Session 1","sd":false,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2025-09-28","we":true,"ses":"Session 1","sd":false,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2025-09-29","we":false,"ses":"Session 1","sd":true,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2025-09-30","we":false,"ses":"Session 1","sd":true,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2025-10-01","we":false,"ses":"Session 1","sd":true,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2025-10-02","we":false,"ses":"Session 1","sd":true,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2025-10-03","we":false,"ses":"Session 1","sd":true,"n":"Session 1 Ends","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2025-10-04","we":true,"ses":"","sd":false,"n":"","cw":10,"iw":8,"sdw":5,"et":"sat_official"},{"d":"2025-10-05","we":true,"ses":"","sd":false,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2025-10-06","we":false,"ses":"","sd":false,"n":"Session Break; Staff Meetings","cw":11,"iw":0,"sdw":0,"et":""},{"d":"2025-10-07","we":false,"ses":"","sd":false,"n":"Session Break; Staff Meetings","cw":11,"iw":0,"sdw":0,"et":""},{"d":"2025-10-08","we":false,"ses":"","sd":false,"n":"Session Break","cw":11,"iw":0,"sdw":0,"et":""},{"d":"2025-10-09","we":false,"ses":"","sd":false,"n":"Session Break","cw":11,"iw":0,"sdw":0,"et":""},{"d":"2025-10-10","we":false,"ses":"","sd":false,"n":"Session Break","cw":11,"iw":0,"sdw":0,"et":""},{"d":"2025-10-11","we":true,"ses":"","sd":false,"n":"","cw":11,"iw":0,"sdw":0,"et":""},{"d":"2025-10-12","we":true,"ses":"","sd":false,"n":"","cw":11,"iw":0,"sdw":0,"et":""},{"d":"2025-10-13","we":false,"ses":"Session 2","sd":true,"n":"Session 2 Starts","cw":12,"iw":9,"sdw":5,"et":""},{"d":"2025-10-14","we":false,"ses":"Session 2","sd":true,"n":"","cw":12,"iw":9,"sdw":5,"et":""},{"d":"2025-10-15","we":false,"ses":"Session 2","sd":true,"n":"","cw":12,"iw":9,"sdw":5,"et":""},{"d":"2025-10-16","we":false,"ses":"Session 2","sd":true,"n":"","cw":12,"iw":9,"sdw":5,"et":""},{"d":"2025-10-17","we":false,"ses":"Session 2","sd":true,"n":"","cw":12,"iw":9,"sdw":5,"et":""},{"d":"2025-10-18","we":true,"ses":"Session 2","sd":false,"n":"","cw":12,"iw":9,"sdw":5,"et":""},{"d":"2025-10-19","we":true,"ses":"Session 2","sd":false,"n":"","cw":12,"iw":9,"sdw":5,"et":""},{"d":"2025-10-20","we":false,"ses":"Session 2","sd":true,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2025-10-21","we":false,"ses":"Session 2","sd":true,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2025-10-22","we":false,"ses":"Session 2","sd":true,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2025-10-23","we":false,"ses":"Session 2","sd":true,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2025-10-24","we":false,"ses":"Session 2","sd":true,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2025-10-25","we":true,"ses":"Session 2","sd":false,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2025-10-26","we":true,"ses":"Session 2","sd":false,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2025-10-27","we":false,"ses":"Session 2","sd":true,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2025-10-28","we":false,"ses":"Session 2","sd":true,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2025-10-29","we":false,"ses":"Session 2","sd":true,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2025-10-30","we":false,"ses":"Session 2","sd":true,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2025-10-31","we":false,"ses":"Session 2","sd":true,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2025-11-01","we":true,"ses":"Session 2","sd":false,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2025-11-02","we":true,"ses":"Session 2","sd":false,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2025-11-03","we":false,"ses":"Session 2","sd":true,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2025-11-04","we":false,"ses":"Session 2","sd":true,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2025-11-05","we":false,"ses":"Session 2","sd":true,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2025-11-06","we":false,"ses":"Session 2","sd":true,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2025-11-07","we":false,"ses":"Session 2","sd":true,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2025-11-08","we":true,"ses":"Session 2","sd":false,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2025-11-09","we":true,"ses":"Session 2","sd":false,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2025-11-10","we":false,"ses":"Session 2","sd":true,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2025-11-11","we":false,"ses":"Session 2","sd":true,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2025-11-12","we":false,"ses":"Session 2","sd":true,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2025-11-13","we":false,"ses":"Session 2","sd":true,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2025-11-14","we":false,"ses":"Session 2","sd":true,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2025-11-15","we":true,"ses":"Session 2","sd":false,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2025-11-16","we":true,"ses":"Session 2","sd":false,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2025-11-17","we":false,"ses":"Session 2","sd":true,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2025-11-18","we":false,"ses":"Session 2","sd":true,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2025-11-19","we":false,"ses":"Session 2","sd":true,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2025-11-20","we":false,"ses":"Session 2","sd":true,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2025-11-21","we":false,"ses":"Session 2","sd":true,"n":"","cw":17,"iw":14,"sdw":5,"et":"sat_practice"},{"d":"2025-11-22","we":true,"ses":"Session 2","sd":false,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2025-11-23","we":true,"ses":"Session 2","sd":false,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2025-11-24","we":false,"ses":"Session 2","sd":false,"n":"Thanksgiving Break","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2025-11-25","we":false,"ses":"Session 2","sd":false,"n":"Thanksgiving Break","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2025-11-26","we":false,"ses":"Session 2","sd":false,"n":"Thanksgiving Break","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2025-11-27","we":false,"ses":"Session 2","sd":false,"n":"Thanksgiving Day; Thanksgiving Break","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2025-11-28","we":false,"ses":"Session 2","sd":false,"n":"Thanksgiving Break","cw":18,"iw":0,"sdw":0,"et":"sat_practice"},{"d":"2025-11-29","we":true,"ses":"Session 2","sd":false,"n":"","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2025-11-30","we":true,"ses":"Session 2","sd":false,"n":"","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2025-12-01","we":false,"ses":"Session 2","sd":true,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2025-12-02","we":false,"ses":"Session 2","sd":true,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2025-12-03","we":false,"ses":"Session 2","sd":true,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2025-12-04","we":false,"ses":"Session 2","sd":true,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2025-12-05","we":false,"ses":"Session 2","sd":true,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2025-12-06","we":true,"ses":"Session 2","sd":false,"n":"","cw":19,"iw":15,"sdw":5,"et":"sat_official"},{"d":"2025-12-07","we":true,"ses":"Session 2","sd":false,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2025-12-08","we":false,"ses":"Session 2","sd":true,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2025-12-09","we":false,"ses":"Session 2","sd":true,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2025-12-10","we":false,"ses":"Session 2","sd":true,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2025-12-11","we":false,"ses":"Session 2","sd":true,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2025-12-12","we":false,"ses":"Session 2","sd":true,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2025-12-13","we":true,"ses":"Session 2","sd":false,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2025-12-14","we":true,"ses":"Session 2","sd":false,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2025-12-15","we":false,"ses":"Session 2","sd":true,"n":"","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2025-12-16","we":false,"ses":"Session 2","sd":true,"n":"","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2025-12-17","we":false,"ses":"Session 2","sd":true,"n":"PM Staff Meetings (Early Dismissal)","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2025-12-18","we":false,"ses":"Session 2","sd":true,"n":"PM Staff Meetings (Early Dismissal)","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2025-12-19","we":false,"ses":"Session 2","sd":true,"n":"Session 2 Ends / PM Staff Meetings","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2025-12-20","we":true,"ses":"","sd":false,"n":"","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2025-12-21","we":true,"ses":"","sd":false,"n":"","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2025-12-22","we":false,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2025-12-23","we":false,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2025-12-24","we":false,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2025-12-25","we":false,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2025-12-26","we":false,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2025-12-27","we":true,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2025-12-28","we":true,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2025-12-29","we":false,"ses":"","sd":false,"n":"Winter Break","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2025-12-30","we":false,"ses":"","sd":false,"n":"Winter Break","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2025-12-31","we":false,"ses":"","sd":false,"n":"Winter Break","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2026-01-01","we":false,"ses":"","sd":false,"n":"Winter Break","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2026-01-02","we":false,"ses":"","sd":false,"n":"Winter Break","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2026-01-03","we":true,"ses":"","sd":false,"n":"","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2026-01-04","we":true,"ses":"","sd":false,"n":"","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2026-01-05","we":false,"ses":"Session 3","sd":true,"n":"Session 3 Starts","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2026-01-06","we":false,"ses":"Session 3","sd":true,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2026-01-07","we":false,"ses":"Session 3","sd":true,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2026-01-08","we":false,"ses":"Session 3","sd":true,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2026-01-09","we":false,"ses":"Session 3","sd":true,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2026-01-10","we":true,"ses":"Session 3","sd":false,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2026-01-11","we":true,"ses":"Session 3","sd":false,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2026-01-12","we":false,"ses":"Session 3","sd":true,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2026-01-13","we":false,"ses":"Session 3","sd":true,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2026-01-14","we":false,"ses":"Session 3","sd":true,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2026-01-15","we":false,"ses":"Session 3","sd":true,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2026-01-16","we":false,"ses":"Session 3","sd":true,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2026-01-17","we":true,"ses":"Session 3","sd":false,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2026-01-18","we":true,"ses":"Session 3","sd":false,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2026-01-19","we":false,"ses":"Session 3","sd":false,"n":"No School / MLK Day","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2026-01-20","we":false,"ses":"Session 3","sd":true,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2026-01-21","we":false,"ses":"Session 3","sd":true,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2026-01-22","we":false,"ses":"Session 3","sd":true,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2026-01-23","we":false,"ses":"Session 3","sd":true,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2026-01-24","we":true,"ses":"Session 3","sd":false,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2026-01-25","we":true,"ses":"Session 3","sd":false,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2026-01-26","we":false,"ses":"Session 3","sd":true,"n":"","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2026-01-27","we":false,"ses":"Session 3","sd":true,"n":"LL-L3 MAP Testing","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2026-01-28","we":false,"ses":"Session 3","sd":true,"n":"LL-L3 MAP Testing","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2026-01-29","we":false,"ses":"Session 3","sd":true,"n":"LL-L3 MAP Testing","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2026-01-30","we":false,"ses":"Session 3","sd":true,"n":"LL-L3 MAP Testing","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2026-01-31","we":true,"ses":"Session 3","sd":false,"n":"","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2026-02-01","we":true,"ses":"Session 3","sd":false,"n":"","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2026-02-02","we":false,"ses":"Session 3","sd":true,"n":"","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2026-02-03","we":false,"ses":"Session 3","sd":true,"n":"","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2026-02-04","we":false,"ses":"Session 3","sd":true,"n":"","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2026-02-05","we":false,"ses":"Session 3","sd":true,"n":"","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2026-02-06","we":false,"ses":"Session 3","sd":true,"n":"","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2026-02-07","we":true,"ses":"Session 3","sd":false,"n":"","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2026-02-08","we":true,"ses":"Session 3","sd":false,"n":"","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2026-02-09","we":false,"ses":"Session 3","sd":true,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2026-02-10","we":false,"ses":"Session 3","sd":true,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2026-02-11","we":false,"ses":"Session 3","sd":true,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2026-02-12","we":false,"ses":"Session 3","sd":true,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2026-02-13","we":false,"ses":"Session 3","sd":true,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2026-02-14","we":true,"ses":"Session 3","sd":false,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2026-02-15","we":true,"ses":"Session 3","sd":false,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2026-02-16","we":false,"ses":"Session 3","sd":true,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2026-02-17","we":false,"ses":"Session 3","sd":true,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2026-02-18","we":false,"ses":"Session 3","sd":true,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2026-02-19","we":false,"ses":"Session 3","sd":true,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2026-02-20","we":false,"ses":"Session 3","sd":true,"n":"Session 3 Ends","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2026-02-21","we":true,"ses":"","sd":false,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2026-02-22","we":true,"ses":"","sd":false,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2026-02-23","we":false,"ses":"","sd":false,"n":"Session Break; Staff Meetings","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2026-02-24","we":false,"ses":"","sd":false,"n":"Session Break; Staff Meetings","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2026-02-25","we":false,"ses":"","sd":false,"n":"Session Break","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2026-02-26","we":false,"ses":"","sd":false,"n":"Session Break","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2026-02-27","we":false,"ses":"","sd":false,"n":"Session Break","cw":31,"iw":0,"sdw":0,"et":"sat_practice"},{"d":"2026-02-28","we":true,"ses":"","sd":false,"n":"","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2026-03-01","we":true,"ses":"","sd":false,"n":"","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2026-03-02","we":false,"ses":"Session 4","sd":true,"n":"Session 4 Starts","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2026-03-03","we":false,"ses":"Session 4","sd":true,"n":"","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2026-03-04","we":false,"ses":"Session 4","sd":true,"n":"","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2026-03-05","we":false,"ses":"Session 4","sd":true,"n":"","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2026-03-06","we":false,"ses":"Session 4","sd":true,"n":"","cw":32,"iw":25,"sdw":5,"et":"sat_practice"},{"d":"2026-03-07","we":true,"ses":"Session 4","sd":false,"n":"","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2026-03-08","we":true,"ses":"Session 4","sd":false,"n":"","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2026-03-09","we":false,"ses":"Session 4","sd":true,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2026-03-10","we":false,"ses":"Session 4","sd":true,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2026-03-11","we":false,"ses":"Session 4","sd":true,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2026-03-12","we":false,"ses":"Session 4","sd":true,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2026-03-13","we":false,"ses":"Session 4","sd":true,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2026-03-14","we":true,"ses":"Session 4","sd":false,"n":"","cw":33,"iw":26,"sdw":5,"et":"sat_official"},{"d":"2026-03-15","we":true,"ses":"Session 4","sd":false,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2026-03-16","we":false,"ses":"Session 4","sd":true,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2026-03-17","we":false,"ses":"Session 4","sd":true,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2026-03-18","we":false,"ses":"Session 4","sd":true,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2026-03-19","we":false,"ses":"Session 4","sd":true,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2026-03-20","we":false,"ses":"Session 4","sd":true,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2026-03-21","we":true,"ses":"Session 4","sd":false,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2026-03-22","we":true,"ses":"Session 4","sd":false,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2026-03-23","we":false,"ses":"Session 4","sd":true,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2026-03-24","we":false,"ses":"Session 4","sd":true,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2026-03-25","we":false,"ses":"Session 4","sd":true,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2026-03-26","we":false,"ses":"Session 4","sd":true,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2026-03-27","we":false,"ses":"Session 4","sd":true,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2026-03-28","we":true,"ses":"Session 4","sd":false,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2026-03-29","we":true,"ses":"Session 4","sd":false,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2026-03-30","we":false,"ses":"Session 4","sd":true,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2026-03-31","we":false,"ses":"Session 4","sd":true,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2026-04-01","we":false,"ses":"Session 4","sd":true,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2026-04-02","we":false,"ses":"Session 4","sd":true,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2026-04-03","we":false,"ses":"Session 4","sd":true,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2026-04-04","we":true,"ses":"Session 4","sd":false,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2026-04-05","we":true,"ses":"Session 4","sd":false,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2026-04-06","we":false,"ses":"Session 4","sd":true,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2026-04-07","we":false,"ses":"Session 4","sd":true,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2026-04-08","we":false,"ses":"Session 4","sd":true,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2026-04-09","we":false,"ses":"Session 4","sd":true,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2026-04-10","we":false,"ses":"Session 4","sd":true,"n":"","cw":37,"iw":30,"sdw":5,"et":"ap_practice"},{"d":"2026-04-11","we":true,"ses":"Session 4","sd":false,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2026-04-12","we":true,"ses":"Session 4","sd":false,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2026-04-13","we":false,"ses":"Session 4","sd":true,"n":"","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2026-04-14","we":false,"ses":"Session 4","sd":true,"n":"","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2026-04-15","we":false,"ses":"Session 4","sd":true,"n":"PM Staff Meetings (Early Dismissal)","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2026-04-16","we":false,"ses":"Session 4","sd":true,"n":"PM Staff Meetings (Early Dismissal)","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2026-04-17","we":false,"ses":"Session 4","sd":true,"n":"Session 4 Ends","cw":38,"iw":31,"sdw":5,"et":"ap_practice"},{"d":"2026-04-18","we":true,"ses":"","sd":false,"n":"","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2026-04-19","we":true,"ses":"","sd":false,"n":"","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2026-04-20","we":false,"ses":"","sd":false,"n":"Session Break","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2026-04-21","we":false,"ses":"","sd":false,"n":"Session Break","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2026-04-22","we":false,"ses":"","sd":false,"n":"Session Break","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2026-04-23","we":false,"ses":"","sd":false,"n":"Session Break","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2026-04-24","we":false,"ses":"","sd":false,"n":"Session Break","cw":39,"iw":0,"sdw":0,"et":"ap_practice"},{"d":"2026-04-25","we":true,"ses":"","sd":false,"n":"","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2026-04-26","we":true,"ses":"","sd":false,"n":"","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2026-04-27","we":false,"ses":"Session 5","sd":true,"n":"Session 5 Starts","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2026-04-28","we":false,"ses":"Session 5","sd":true,"n":"","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2026-04-29","we":false,"ses":"Session 5","sd":true,"n":"","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2026-04-30","we":false,"ses":"Session 5","sd":true,"n":"","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2026-05-01","we":false,"ses":"Session 5","sd":true,"n":"","cw":40,"iw":32,"sdw":5,"et":"ap_practice"},{"d":"2026-05-02","we":true,"ses":"Session 5","sd":false,"n":"","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2026-05-03","we":true,"ses":"Session 5","sd":false,"n":"","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2026-05-04","we":false,"ses":"Session 5","sd":true,"n":"","cw":41,"iw":33,"sdw":5,"et":"ap_exam:Bio,Micro"},{"d":"2026-05-05","we":false,"ses":"Session 5","sd":true,"n":"MAP Testing","cw":41,"iw":33,"sdw":5,"et":"ap_exam:Chem,HuGeo,USGov"},{"d":"2026-05-06","we":false,"ses":"Session 5","sd":true,"n":"MAP Testing","cw":41,"iw":33,"sdw":5,"et":"ap_exam:EngLit,Physics1"},{"d":"2026-05-07","we":false,"ses":"Session 5","sd":true,"n":"MAP Testing","cw":41,"iw":33,"sdw":5,"et":"ap_exam:WorldHist,Stats"},{"d":"2026-05-08","we":false,"ses":"Session 5","sd":true,"n":"MAP Testing","cw":41,"iw":33,"sdw":5,"et":"ap_exam:APUSH"},{"d":"2026-05-09","we":true,"ses":"Session 5","sd":false,"n":"","cw":41,"iw":33,"sdw":5,"et":""},{"d":"2026-05-10","we":true,"ses":"Session 5","sd":false,"n":"","cw":41,"iw":33,"sdw":5,"et":""},{"d":"2026-05-11","we":false,"ses":"Session 5","sd":true,"n":"","cw":42,"iw":34,"sdw":5,"et":"ap_exam:CalcAB,CalcBC,MusicTheory"},{"d":"2026-05-12","we":false,"ses":"Session 5","sd":true,"n":"","cw":42,"iw":34,"sdw":5,"et":"ap_exam:Psych"},{"d":"2026-05-13","we":false,"ses":"Session 5","sd":true,"n":"","cw":42,"iw":34,"sdw":5,"et":"ap_exam:EngLang"},{"d":"2026-05-14","we":false,"ses":"Session 5","sd":true,"n":"","cw":42,"iw":34,"sdw":5,"et":""},{"d":"2026-05-15","we":false,"ses":"Session 5","sd":true,"n":"","cw":42,"iw":34,"sdw":5,"et":"ap_exam:EnvSci,CSA"},{"d":"2026-05-16","we":true,"ses":"Session 5","sd":false,"n":"","cw":42,"iw":34,"sdw":5,"et":""},{"d":"2026-05-17","we":true,"ses":"Session 5","sd":false,"n":"","cw":42,"iw":34,"sdw":5,"et":""},{"d":"2026-05-18","we":false,"ses":"Session 5","sd":true,"n":"","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2026-05-19","we":false,"ses":"Session 5","sd":true,"n":"","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2026-05-20","we":false,"ses":"Session 5","sd":true,"n":"","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2026-05-21","we":false,"ses":"Session 5","sd":true,"n":"","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2026-05-22","we":false,"ses":"Session 5","sd":true,"n":"","cw":43,"iw":35,"sdw":5,"et":"sat_practice"},{"d":"2026-05-23","we":true,"ses":"Session 5","sd":false,"n":"","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2026-05-24","we":true,"ses":"Session 5","sd":false,"n":"","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2026-05-25","we":false,"ses":"Session 5","sd":false,"n":"No School / Memorial Day","cw":44,"iw":36,"sdw":4,"et":""},{"d":"2026-05-26","we":false,"ses":"Session 5","sd":true,"n":"","cw":44,"iw":36,"sdw":4,"et":""},{"d":"2026-05-27","we":false,"ses":"Session 5","sd":true,"n":"","cw":44,"iw":36,"sdw":4,"et":""},{"d":"2026-05-28","we":false,"ses":"Session 5","sd":true,"n":"","cw":44,"iw":36,"sdw":4,"et":""},{"d":"2026-05-29","we":false,"ses":"Session 5","sd":true,"n":"","cw":44,"iw":36,"sdw":4,"et":"sat_practice"},{"d":"2026-05-30","we":true,"ses":"Session 5","sd":false,"n":"","cw":44,"iw":36,"sdw":4,"et":""},{"d":"2026-05-31","we":true,"ses":"Session 5","sd":false,"n":"","cw":44,"iw":36,"sdw":4,"et":""},{"d":"2026-06-01","we":false,"ses":"Session 5","sd":true,"n":"","cw":45,"iw":37,"sdw":5,"et":""},{"d":"2026-06-02","we":false,"ses":"Session 5","sd":true,"n":"","cw":45,"iw":37,"sdw":5,"et":""},{"d":"2026-06-03","we":false,"ses":"Session 5","sd":true,"n":"","cw":45,"iw":37,"sdw":5,"et":""},{"d":"2026-06-04","we":false,"ses":"Session 5","sd":true,"n":"","cw":45,"iw":37,"sdw":5,"et":""},{"d":"2026-06-05","we":false,"ses":"Session 5","sd":true,"n":"Last Day of School / Session 5 Ends","cw":45,"iw":37,"sdw":5,"et":""},{"d":"2026-06-06","we":true,"ses":"","sd":false,"n":"","cw":45,"iw":37,"sdw":5,"et":"sat_official"},{"d":"2026-06-07","we":true,"ses":"","sd":false,"n":"","cw":45,"iw":37,"sdw":5,"et":""},{"d":"2026-06-08","we":false,"ses":"","sd":false,"n":"Staff Meetings","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2026-06-09","we":false,"ses":"","sd":false,"n":"Staff Meetings","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2026-06-10","we":false,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2026-06-11","we":false,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2026-06-12","we":false,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2026-06-13","we":true,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2026-06-14","we":true,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2026-06-15","we":false,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2026-06-16","we":false,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2026-06-17","we":false,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2026-06-18","we":false,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2026-06-19","we":false,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2026-06-20","we":true,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2026-06-21","we":true,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2026-06-22","we":false,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2026-06-23","we":false,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2026-06-24","we":false,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2026-06-25","we":false,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2026-06-26","we":false,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2026-06-27","we":true,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2026-06-28","we":true,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2026-06-29","we":false,"ses":"","sd":false,"n":"","cw":49,"iw":0,"sdw":0,"et":""},{"d":"2026-06-30","we":false,"ses":"","sd":false,"n":"","cw":49,"iw":0,"sdw":0,"et":""},{"d":"2026-08-01","we":true,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":1,"iw":0,"sdw":0,"et":""},{"d":"2026-08-02","we":true,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":1,"iw":0,"sdw":0,"et":""},{"d":"2026-08-03","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2026-08-04","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2026-08-05","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2026-08-06","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2026-08-07","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2026-08-08","we":true,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2026-08-09","we":true,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":2,"iw":0,"sdw":0,"et":""},{"d":"2026-08-10","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2026-08-11","we":false,"ses":"","sd":false,"n":"Staff Meetings (No Students)","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2026-08-12","we":false,"ses":"Session 1","sd":true,"n":"First Day of School / Session 1 Starts","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2026-08-13","we":false,"ses":"Session 1","sd":true,"n":"","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2026-08-14","we":false,"ses":"Session 1","sd":true,"n":"","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2026-08-15","we":true,"ses":"Session 1","sd":false,"n":"","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2026-08-16","we":true,"ses":"Session 1","sd":false,"n":"","cw":3,"iw":1,"sdw":3,"et":""},{"d":"2026-08-17","we":false,"ses":"Session 1","sd":true,"n":"","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2026-08-18","we":false,"ses":"Session 1","sd":true,"n":"Fall MAP Testing","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2026-08-19","we":false,"ses":"Session 1","sd":true,"n":"Fall MAP Testing","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2026-08-20","we":false,"ses":"Session 1","sd":true,"n":"Fall MAP Testing","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2026-08-21","we":false,"ses":"Session 1","sd":true,"n":"Fall MAP Testing","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2026-08-22","we":true,"ses":"Session 1","sd":false,"n":"","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2026-08-23","we":true,"ses":"Session 1","sd":false,"n":"","cw":4,"iw":2,"sdw":5,"et":""},{"d":"2026-08-24","we":false,"ses":"Session 1","sd":true,"n":"Fall MAP Retesting","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2026-08-25","we":false,"ses":"Session 1","sd":true,"n":"Fall MAP Retesting","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2026-08-26","we":false,"ses":"Session 1","sd":true,"n":"Fall MAP Retesting","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2026-08-27","we":false,"ses":"Session 1","sd":true,"n":"Fall MAP Retesting","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2026-08-28","we":false,"ses":"Session 1","sd":true,"n":"Fall MAP Retesting","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2026-08-29","we":true,"ses":"Session 1","sd":false,"n":"","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2026-08-30","we":true,"ses":"Session 1","sd":false,"n":"","cw":5,"iw":3,"sdw":5,"et":""},{"d":"2026-08-31","we":false,"ses":"Session 1","sd":true,"n":"","cw":6,"iw":4,"sdw":5,"et":""},{"d":"2026-09-01","we":false,"ses":"Session 1","sd":true,"n":"","cw":6,"iw":4,"sdw":5,"et":""},{"d":"2026-09-02","we":false,"ses":"Session 1","sd":true,"n":"","cw":6,"iw":4,"sdw":5,"et":""},{"d":"2026-09-03","we":false,"ses":"Session 1","sd":true,"n":"","cw":6,"iw":4,"sdw":5,"et":""},{"d":"2026-09-04","we":false,"ses":"Session 1","sd":true,"n":"","cw":6,"iw":4,"sdw":5,"et":""},{"d":"2026-09-05","we":true,"ses":"Session 1","sd":false,"n":"","cw":6,"iw":4,"sdw":5,"et":""},{"d":"2026-09-06","we":true,"ses":"Session 1","sd":false,"n":"","cw":6,"iw":4,"sdw":5,"et":""},{"d":"2026-09-07","we":false,"ses":"Session 1","sd":false,"n":"No School / Labor Day","cw":7,"iw":5,"sdw":4,"et":""},{"d":"2026-09-08","we":false,"ses":"Session 1","sd":true,"n":"","cw":7,"iw":5,"sdw":4,"et":""},{"d":"2026-09-09","we":false,"ses":"Session 1","sd":true,"n":"","cw":7,"iw":5,"sdw":4,"et":""},{"d":"2026-09-10","we":false,"ses":"Session 1","sd":true,"n":"","cw":7,"iw":5,"sdw":4,"et":""},{"d":"2026-09-11","we":false,"ses":"Session 1","sd":true,"n":"","cw":7,"iw":5,"sdw":4,"et":""},{"d":"2026-09-12","we":true,"ses":"Session 1","sd":false,"n":"","cw":7,"iw":5,"sdw":4,"et":""},{"d":"2026-09-13","we":true,"ses":"Session 1","sd":false,"n":"","cw":7,"iw":5,"sdw":4,"et":""},{"d":"2026-09-14","we":false,"ses":"Session 1","sd":true,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2026-09-15","we":false,"ses":"Session 1","sd":true,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2026-09-16","we":false,"ses":"Session 1","sd":true,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2026-09-17","we":false,"ses":"Session 1","sd":true,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2026-09-18","we":false,"ses":"Session 1","sd":true,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2026-09-19","we":true,"ses":"Session 1","sd":false,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2026-09-20","we":true,"ses":"Session 1","sd":false,"n":"","cw":8,"iw":6,"sdw":5,"et":""},{"d":"2026-09-21","we":false,"ses":"Session 1","sd":true,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2026-09-22","we":false,"ses":"Session 1","sd":true,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2026-09-23","we":false,"ses":"Session 1","sd":true,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2026-09-24","we":false,"ses":"Session 1","sd":true,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2026-09-25","we":false,"ses":"Session 1","sd":true,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2026-09-26","we":true,"ses":"Session 1","sd":false,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2026-09-27","we":true,"ses":"Session 1","sd":false,"n":"","cw":9,"iw":7,"sdw":5,"et":""},{"d":"2026-09-28","we":false,"ses":"Session 1","sd":true,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2026-09-29","we":false,"ses":"Session 1","sd":true,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2026-09-30","we":false,"ses":"Session 1","sd":true,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2026-10-01","we":false,"ses":"Session 1","sd":true,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2026-10-02","we":false,"ses":"Session 1","sd":true,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2026-10-03","we":true,"ses":"Session 1","sd":false,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2026-10-04","we":true,"ses":"Session 1","sd":false,"n":"","cw":10,"iw":8,"sdw":5,"et":""},{"d":"2026-10-05","we":false,"ses":"Session 1","sd":true,"n":"","cw":11,"iw":9,"sdw":5,"et":""},{"d":"2026-10-06","we":false,"ses":"Session 1","sd":true,"n":"","cw":11,"iw":9,"sdw":5,"et":""},{"d":"2026-10-07","we":false,"ses":"Session 1","sd":true,"n":"","cw":11,"iw":9,"sdw":5,"et":""},{"d":"2026-10-08","we":false,"ses":"Session 1","sd":true,"n":"","cw":11,"iw":9,"sdw":5,"et":""},{"d":"2026-10-09","we":false,"ses":"Session 1","sd":true,"n":"Session 1 Ends","cw":11,"iw":9,"sdw":5,"et":""},{"d":"2026-10-10","we":true,"ses":"","sd":false,"n":"","cw":11,"iw":9,"sdw":5,"et":""},{"d":"2026-10-11","we":true,"ses":"","sd":false,"n":"","cw":11,"iw":9,"sdw":5,"et":""},{"d":"2026-10-12","we":false,"ses":"","sd":false,"n":"Session Break; Staff Meetings","cw":12,"iw":0,"sdw":0,"et":""},{"d":"2026-10-13","we":false,"ses":"","sd":false,"n":"Session Break; Staff Meetings","cw":12,"iw":0,"sdw":0,"et":""},{"d":"2026-10-14","we":false,"ses":"","sd":false,"n":"Session Break","cw":12,"iw":0,"sdw":0,"et":""},{"d":"2026-10-15","we":false,"ses":"","sd":false,"n":"Session Break","cw":12,"iw":0,"sdw":0,"et":""},{"d":"2026-10-16","we":false,"ses":"","sd":false,"n":"Session Break","cw":12,"iw":0,"sdw":0,"et":""},{"d":"2026-10-17","we":true,"ses":"","sd":false,"n":"","cw":12,"iw":0,"sdw":0,"et":""},{"d":"2026-10-18","we":true,"ses":"","sd":false,"n":"","cw":12,"iw":0,"sdw":0,"et":""},{"d":"2026-10-19","we":false,"ses":"Session 2","sd":true,"n":"Session 2 Starts","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2026-10-20","we":false,"ses":"Session 2","sd":true,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2026-10-21","we":false,"ses":"Session 2","sd":true,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2026-10-22","we":false,"ses":"Session 2","sd":true,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2026-10-23","we":false,"ses":"Session 2","sd":true,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2026-10-24","we":true,"ses":"Session 2","sd":false,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2026-10-25","we":true,"ses":"Session 2","sd":false,"n":"","cw":13,"iw":10,"sdw":5,"et":""},{"d":"2026-10-26","we":false,"ses":"Session 2","sd":true,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2026-10-27","we":false,"ses":"Session 2","sd":true,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2026-10-28","we":false,"ses":"Session 2","sd":true,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2026-10-29","we":false,"ses":"Session 2","sd":true,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2026-10-30","we":false,"ses":"Session 2","sd":true,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2026-10-31","we":true,"ses":"Session 2","sd":false,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2026-11-01","we":true,"ses":"Session 2","sd":false,"n":"","cw":14,"iw":11,"sdw":5,"et":""},{"d":"2026-11-02","we":false,"ses":"Session 2","sd":true,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2026-11-03","we":false,"ses":"Session 2","sd":true,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2026-11-04","we":false,"ses":"Session 2","sd":true,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2026-11-05","we":false,"ses":"Session 2","sd":true,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2026-11-06","we":false,"ses":"Session 2","sd":true,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2026-11-07","we":true,"ses":"Session 2","sd":false,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2026-11-08","we":true,"ses":"Session 2","sd":false,"n":"","cw":15,"iw":12,"sdw":5,"et":""},{"d":"2026-11-09","we":false,"ses":"Session 2","sd":true,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2026-11-10","we":false,"ses":"Session 2","sd":true,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2026-11-11","we":false,"ses":"Session 2","sd":true,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2026-11-12","we":false,"ses":"Session 2","sd":true,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2026-11-13","we":false,"ses":"Session 2","sd":true,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2026-11-14","we":true,"ses":"Session 2","sd":false,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2026-11-15","we":true,"ses":"Session 2","sd":false,"n":"","cw":16,"iw":13,"sdw":5,"et":""},{"d":"2026-11-16","we":false,"ses":"Session 2","sd":true,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2026-11-17","we":false,"ses":"Session 2","sd":true,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2026-11-18","we":false,"ses":"Session 2","sd":true,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2026-11-19","we":false,"ses":"Session 2","sd":true,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2026-11-20","we":false,"ses":"Session 2","sd":true,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2026-11-21","we":true,"ses":"Session 2","sd":false,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2026-11-22","we":true,"ses":"Session 2","sd":false,"n":"","cw":17,"iw":14,"sdw":5,"et":""},{"d":"2026-11-23","we":false,"ses":"Session 2","sd":false,"n":"Thanksgiving Break","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2026-11-24","we":false,"ses":"Session 2","sd":false,"n":"Thanksgiving Break","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2026-11-25","we":false,"ses":"Session 2","sd":false,"n":"Thanksgiving Break","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2026-11-26","we":false,"ses":"Session 2","sd":false,"n":"Thanksgiving Day; Thanksgiving Break","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2026-11-27","we":false,"ses":"Session 2","sd":false,"n":"Thanksgiving Break","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2026-11-28","we":true,"ses":"Session 2","sd":false,"n":"","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2026-11-29","we":true,"ses":"Session 2","sd":false,"n":"","cw":18,"iw":0,"sdw":0,"et":""},{"d":"2026-11-30","we":false,"ses":"Session 2","sd":true,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2026-12-01","we":false,"ses":"Session 2","sd":true,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2026-12-02","we":false,"ses":"Session 2","sd":true,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2026-12-03","we":false,"ses":"Session 2","sd":true,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2026-12-04","we":false,"ses":"Session 2","sd":true,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2026-12-05","we":true,"ses":"Session 2","sd":false,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2026-12-06","we":true,"ses":"Session 2","sd":false,"n":"","cw":19,"iw":15,"sdw":5,"et":""},{"d":"2026-12-07","we":false,"ses":"Session 2","sd":true,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2026-12-08","we":false,"ses":"Session 2","sd":true,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2026-12-09","we":false,"ses":"Session 2","sd":true,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2026-12-10","we":false,"ses":"Session 2","sd":true,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2026-12-11","we":false,"ses":"Session 2","sd":true,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2026-12-12","we":true,"ses":"Session 2","sd":false,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2026-12-13","we":true,"ses":"Session 2","sd":false,"n":"","cw":20,"iw":16,"sdw":5,"et":""},{"d":"2026-12-14","we":false,"ses":"Session 2","sd":true,"n":"","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2026-12-15","we":false,"ses":"Session 2","sd":true,"n":"","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2026-12-16","we":false,"ses":"Session 2","sd":true,"n":"PM Staff Meetings (Early Dismissal)","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2026-12-17","we":false,"ses":"Session 2","sd":true,"n":"PM Staff Meetings (Early Dismissal)","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2026-12-18","we":false,"ses":"Session 2","sd":true,"n":"Session 2 Ends / PM Staff Meetings","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2026-12-19","we":true,"ses":"","sd":false,"n":"","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2026-12-20","we":true,"ses":"","sd":false,"n":"","cw":21,"iw":17,"sdw":5,"et":""},{"d":"2026-12-21","we":false,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2026-12-22","we":false,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2026-12-23","we":false,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2026-12-24","we":false,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2026-12-25","we":false,"ses":"","sd":false,"n":"Winter Break","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2026-12-26","we":true,"ses":"","sd":false,"n":"","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2026-12-27","we":true,"ses":"","sd":false,"n":"","cw":22,"iw":0,"sdw":0,"et":""},{"d":"2026-12-28","we":false,"ses":"","sd":false,"n":"Winter Break","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2026-12-29","we":false,"ses":"","sd":false,"n":"Winter Break","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2026-12-30","we":false,"ses":"","sd":false,"n":"Winter Break","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2026-12-31","we":false,"ses":"","sd":false,"n":"Winter Break","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2027-01-01","we":false,"ses":"","sd":false,"n":"Winter Break","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2027-01-02","we":true,"ses":"","sd":false,"n":"","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2027-01-03","we":true,"ses":"","sd":false,"n":"","cw":23,"iw":0,"sdw":0,"et":""},{"d":"2027-01-04","we":false,"ses":"Session 3","sd":true,"n":"Session 3 Starts","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2027-01-05","we":false,"ses":"Session 3","sd":true,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2027-01-06","we":false,"ses":"Session 3","sd":true,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2027-01-07","we":false,"ses":"Session 3","sd":true,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2027-01-08","we":false,"ses":"Session 3","sd":true,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2027-01-09","we":true,"ses":"Session 3","sd":false,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2027-01-10","we":true,"ses":"Session 3","sd":false,"n":"","cw":24,"iw":18,"sdw":5,"et":""},{"d":"2027-01-11","we":false,"ses":"Session 3","sd":true,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2027-01-12","we":false,"ses":"Session 3","sd":true,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2027-01-13","we":false,"ses":"Session 3","sd":true,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2027-01-14","we":false,"ses":"Session 3","sd":true,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2027-01-15","we":false,"ses":"Session 3","sd":true,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2027-01-16","we":true,"ses":"Session 3","sd":false,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2027-01-17","we":true,"ses":"Session 3","sd":false,"n":"","cw":25,"iw":19,"sdw":5,"et":""},{"d":"2027-01-18","we":false,"ses":"Session 3","sd":false,"n":"No School / MLK Day","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2027-01-19","we":false,"ses":"Session 3","sd":true,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2027-01-20","we":false,"ses":"Session 3","sd":true,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2027-01-21","we":false,"ses":"Session 3","sd":true,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2027-01-22","we":false,"ses":"Session 3","sd":true,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2027-01-23","we":true,"ses":"Session 3","sd":false,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2027-01-24","we":true,"ses":"Session 3","sd":false,"n":"","cw":26,"iw":20,"sdw":4,"et":""},{"d":"2027-01-25","we":false,"ses":"Session 3","sd":true,"n":"","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2027-01-26","we":false,"ses":"Session 3","sd":true,"n":"Winter MAP Testing","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2027-01-27","we":false,"ses":"Session 3","sd":true,"n":"Winter MAP Testing","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2027-01-28","we":false,"ses":"Session 3","sd":true,"n":"Winter MAP Testing","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2027-01-29","we":false,"ses":"Session 3","sd":true,"n":"Winter MAP Testing","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2027-01-30","we":true,"ses":"Session 3","sd":false,"n":"","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2027-01-31","we":true,"ses":"Session 3","sd":false,"n":"","cw":27,"iw":21,"sdw":5,"et":""},{"d":"2027-02-01","we":false,"ses":"Session 3","sd":true,"n":"Winter MAP Retesting","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2027-02-02","we":false,"ses":"Session 3","sd":true,"n":"Winter MAP Retesting","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2027-02-03","we":false,"ses":"Session 3","sd":true,"n":"Winter MAP Retesting","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2027-02-04","we":false,"ses":"Session 3","sd":true,"n":"Winter MAP Retesting","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2027-02-05","we":false,"ses":"Session 3","sd":true,"n":"Winter MAP Retesting","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2027-02-06","we":true,"ses":"Session 3","sd":false,"n":"","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2027-02-07","we":true,"ses":"Session 3","sd":false,"n":"","cw":28,"iw":22,"sdw":5,"et":""},{"d":"2027-02-08","we":false,"ses":"Session 3","sd":true,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2027-02-09","we":false,"ses":"Session 3","sd":true,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2027-02-10","we":false,"ses":"Session 3","sd":true,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2027-02-11","we":false,"ses":"Session 3","sd":true,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2027-02-12","we":false,"ses":"Session 3","sd":true,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2027-02-13","we":true,"ses":"Session 3","sd":false,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2027-02-14","we":true,"ses":"Session 3","sd":false,"n":"","cw":29,"iw":23,"sdw":5,"et":""},{"d":"2027-02-15","we":false,"ses":"Session 3","sd":true,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2027-02-16","we":false,"ses":"Session 3","sd":true,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2027-02-17","we":false,"ses":"Session 3","sd":true,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2027-02-18","we":false,"ses":"Session 3","sd":true,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2027-02-19","we":false,"ses":"Session 3","sd":true,"n":"Session 3 Ends","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2027-02-20","we":true,"ses":"","sd":false,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2027-02-21","we":true,"ses":"","sd":false,"n":"","cw":30,"iw":24,"sdw":5,"et":""},{"d":"2027-02-22","we":false,"ses":"","sd":false,"n":"Session Break; Staff Meetings","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2027-02-23","we":false,"ses":"","sd":false,"n":"Session Break; Staff Meetings","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2027-02-24","we":false,"ses":"","sd":false,"n":"Session Break","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2027-02-25","we":false,"ses":"","sd":false,"n":"Session Break","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2027-02-26","we":false,"ses":"","sd":false,"n":"Session Break","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2027-02-27","we":true,"ses":"","sd":false,"n":"","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2027-02-28","we":true,"ses":"","sd":false,"n":"","cw":31,"iw":0,"sdw":0,"et":""},{"d":"2027-03-01","we":false,"ses":"Session 4","sd":true,"n":"Session 4 Starts","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2027-03-02","we":false,"ses":"Session 4","sd":true,"n":"","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2027-03-03","we":false,"ses":"Session 4","sd":true,"n":"","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2027-03-04","we":false,"ses":"Session 4","sd":true,"n":"","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2027-03-05","we":false,"ses":"Session 4","sd":true,"n":"","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2027-03-06","we":true,"ses":"Session 4","sd":false,"n":"","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2027-03-07","we":true,"ses":"Session 4","sd":false,"n":"","cw":32,"iw":25,"sdw":5,"et":""},{"d":"2027-03-08","we":false,"ses":"Session 4","sd":true,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2027-03-09","we":false,"ses":"Session 4","sd":true,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2027-03-10","we":false,"ses":"Session 4","sd":true,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2027-03-11","we":false,"ses":"Session 4","sd":true,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2027-03-12","we":false,"ses":"Session 4","sd":true,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2027-03-13","we":true,"ses":"Session 4","sd":false,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2027-03-14","we":true,"ses":"Session 4","sd":false,"n":"","cw":33,"iw":26,"sdw":5,"et":""},{"d":"2027-03-15","we":false,"ses":"Session 4","sd":true,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2027-03-16","we":false,"ses":"Session 4","sd":true,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2027-03-17","we":false,"ses":"Session 4","sd":true,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2027-03-18","we":false,"ses":"Session 4","sd":true,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2027-03-19","we":false,"ses":"Session 4","sd":true,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2027-03-20","we":true,"ses":"Session 4","sd":false,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2027-03-21","we":true,"ses":"Session 4","sd":false,"n":"","cw":34,"iw":27,"sdw":5,"et":""},{"d":"2027-03-22","we":false,"ses":"Session 4","sd":true,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2027-03-23","we":false,"ses":"Session 4","sd":true,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2027-03-24","we":false,"ses":"Session 4","sd":true,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2027-03-25","we":false,"ses":"Session 4","sd":true,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2027-03-26","we":false,"ses":"Session 4","sd":true,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2027-03-27","we":true,"ses":"Session 4","sd":false,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2027-03-28","we":true,"ses":"Session 4","sd":false,"n":"","cw":35,"iw":28,"sdw":5,"et":""},{"d":"2027-03-29","we":false,"ses":"Session 4","sd":true,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2027-03-30","we":false,"ses":"Session 4","sd":true,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2027-03-31","we":false,"ses":"Session 4","sd":true,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2027-04-01","we":false,"ses":"Session 4","sd":true,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2027-04-02","we":false,"ses":"Session 4","sd":true,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2027-04-03","we":true,"ses":"Session 4","sd":false,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2027-04-04","we":true,"ses":"Session 4","sd":false,"n":"","cw":36,"iw":29,"sdw":5,"et":""},{"d":"2027-04-05","we":false,"ses":"Session 4","sd":true,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2027-04-06","we":false,"ses":"Session 4","sd":true,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2027-04-07","we":false,"ses":"Session 4","sd":true,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2027-04-08","we":false,"ses":"Session 4","sd":true,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2027-04-09","we":false,"ses":"Session 4","sd":true,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2027-04-10","we":true,"ses":"Session 4","sd":false,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2027-04-11","we":true,"ses":"Session 4","sd":false,"n":"","cw":37,"iw":30,"sdw":5,"et":""},{"d":"2027-04-12","we":false,"ses":"Session 4","sd":true,"n":"","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2027-04-13","we":false,"ses":"Session 4","sd":true,"n":"","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2027-04-14","we":false,"ses":"Session 4","sd":true,"n":"","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2027-04-15","we":false,"ses":"Session 4","sd":true,"n":"PM Staff Meetings (Early Dismissal)","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2027-04-16","we":false,"ses":"Session 4","sd":true,"n":"Session 4 Ends / PM Staff Meetings","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2027-04-17","we":true,"ses":"","sd":false,"n":"","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2027-04-18","we":true,"ses":"","sd":false,"n":"","cw":38,"iw":31,"sdw":5,"et":""},{"d":"2027-04-19","we":false,"ses":"","sd":false,"n":"Session Break; Staff Meetings","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2027-04-20","we":false,"ses":"","sd":false,"n":"Session Break; Staff Meetings","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2027-04-21","we":false,"ses":"","sd":false,"n":"Session Break","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2027-04-22","we":false,"ses":"","sd":false,"n":"Session Break","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2027-04-23","we":false,"ses":"","sd":false,"n":"Session Break","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2027-04-24","we":true,"ses":"","sd":false,"n":"","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2027-04-25","we":true,"ses":"","sd":false,"n":"","cw":39,"iw":0,"sdw":0,"et":""},{"d":"2027-04-26","we":false,"ses":"Session 5","sd":true,"n":"Session 5 Starts","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2027-04-27","we":false,"ses":"Session 5","sd":true,"n":"","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2027-04-28","we":false,"ses":"Session 5","sd":true,"n":"","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2027-04-29","we":false,"ses":"Session 5","sd":true,"n":"","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2027-04-30","we":false,"ses":"Session 5","sd":true,"n":"","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2027-05-01","we":true,"ses":"Session 5","sd":false,"n":"","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2027-05-02","we":true,"ses":"Session 5","sd":false,"n":"","cw":40,"iw":32,"sdw":5,"et":""},{"d":"2027-05-03","we":false,"ses":"Session 5","sd":true,"n":"","cw":41,"iw":33,"sdw":5,"et":""},{"d":"2027-05-04","we":false,"ses":"Session 5","sd":true,"n":"","cw":41,"iw":33,"sdw":5,"et":""},{"d":"2027-05-05","we":false,"ses":"Session 5","sd":true,"n":"","cw":41,"iw":33,"sdw":5,"et":""},{"d":"2027-05-06","we":false,"ses":"Session 5","sd":true,"n":"","cw":41,"iw":33,"sdw":5,"et":""},{"d":"2027-05-07","we":false,"ses":"Session 5","sd":true,"n":"","cw":41,"iw":33,"sdw":5,"et":""},{"d":"2027-05-08","we":true,"ses":"Session 5","sd":false,"n":"","cw":41,"iw":33,"sdw":5,"et":""},{"d":"2027-05-09","we":true,"ses":"Session 5","sd":false,"n":"","cw":41,"iw":33,"sdw":5,"et":""},{"d":"2027-05-10","we":false,"ses":"Session 5","sd":true,"n":"","cw":42,"iw":34,"sdw":5,"et":""},{"d":"2027-05-11","we":false,"ses":"Session 5","sd":true,"n":"","cw":42,"iw":34,"sdw":5,"et":""},{"d":"2027-05-12","we":false,"ses":"Session 5","sd":true,"n":"","cw":42,"iw":34,"sdw":5,"et":""},{"d":"2027-05-13","we":false,"ses":"Session 5","sd":true,"n":"","cw":42,"iw":34,"sdw":5,"et":""},{"d":"2027-05-14","we":false,"ses":"Session 5","sd":true,"n":"","cw":42,"iw":34,"sdw":5,"et":""},{"d":"2027-05-15","we":true,"ses":"Session 5","sd":false,"n":"","cw":42,"iw":34,"sdw":5,"et":""},{"d":"2027-05-16","we":true,"ses":"Session 5","sd":false,"n":"","cw":42,"iw":34,"sdw":5,"et":""},{"d":"2027-05-17","we":false,"ses":"Session 5","sd":true,"n":"","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2027-05-18","we":false,"ses":"Session 5","sd":true,"n":"Spring MAP Testing","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2027-05-19","we":false,"ses":"Session 5","sd":true,"n":"Spring MAP Testing","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2027-05-20","we":false,"ses":"Session 5","sd":true,"n":"Spring MAP Testing","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2027-05-21","we":false,"ses":"Session 5","sd":true,"n":"Spring MAP Testing","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2027-05-22","we":true,"ses":"Session 5","sd":false,"n":"","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2027-05-23","we":true,"ses":"Session 5","sd":false,"n":"","cw":43,"iw":35,"sdw":5,"et":""},{"d":"2027-05-24","we":false,"ses":"Session 5","sd":true,"n":"Spring MAP Retesting","cw":44,"iw":36,"sdw":5,"et":""},{"d":"2027-05-25","we":false,"ses":"Session 5","sd":true,"n":"Spring MAP Retesting","cw":44,"iw":36,"sdw":5,"et":""},{"d":"2027-05-26","we":false,"ses":"Session 5","sd":true,"n":"Spring MAP Retesting","cw":44,"iw":36,"sdw":5,"et":""},{"d":"2027-05-27","we":false,"ses":"Session 5","sd":true,"n":"Spring MAP Retesting","cw":44,"iw":36,"sdw":5,"et":""},{"d":"2027-05-28","we":false,"ses":"Session 5","sd":true,"n":"Spring MAP Retesting","cw":44,"iw":36,"sdw":5,"et":""},{"d":"2027-05-29","we":true,"ses":"Session 5","sd":false,"n":"","cw":44,"iw":36,"sdw":5,"et":""},{"d":"2027-05-30","we":true,"ses":"Session 5","sd":false,"n":"","cw":44,"iw":36,"sdw":5,"et":""},{"d":"2027-05-31","we":false,"ses":"Session 5","sd":false,"n":"No School / Memorial Day","cw":45,"iw":37,"sdw":4,"et":""},{"d":"2027-06-01","we":false,"ses":"Session 5","sd":true,"n":"","cw":45,"iw":37,"sdw":4,"et":""},{"d":"2027-06-02","we":false,"ses":"Session 5","sd":true,"n":"","cw":45,"iw":37,"sdw":4,"et":""},{"d":"2027-06-03","we":false,"ses":"Session 5","sd":true,"n":"","cw":45,"iw":37,"sdw":4,"et":""},{"d":"2027-06-04","we":false,"ses":"Session 5","sd":true,"n":"Last Day of School / Session 5 Ends","cw":45,"iw":37,"sdw":4,"et":""},{"d":"2027-06-05","we":true,"ses":"","sd":false,"n":"","cw":45,"iw":37,"sdw":4,"et":""},{"d":"2027-06-06","we":true,"ses":"","sd":false,"n":"","cw":45,"iw":37,"sdw":4,"et":""},{"d":"2027-06-07","we":false,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2027-06-08","we":false,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2027-06-09","we":false,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2027-06-10","we":false,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2027-06-11","we":false,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2027-06-12","we":true,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2027-06-13","we":true,"ses":"","sd":false,"n":"","cw":46,"iw":0,"sdw":0,"et":""},{"d":"2027-06-14","we":false,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2027-06-15","we":false,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2027-06-16","we":false,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2027-06-17","we":false,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2027-06-18","we":false,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2027-06-19","we":true,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2027-06-20","we":true,"ses":"","sd":false,"n":"","cw":47,"iw":0,"sdw":0,"et":""},{"d":"2027-06-21","we":false,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2027-06-22","we":false,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2027-06-23","we":false,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2027-06-24","we":false,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2027-06-25","we":false,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2027-06-26","we":true,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2027-06-27","we":true,"ses":"","sd":false,"n":"","cw":48,"iw":0,"sdw":0,"et":""},{"d":"2027-06-28","we":false,"ses":"","sd":false,"n":"","cw":49,"iw":0,"sdw":0,"et":""},{"d":"2027-06-29","we":false,"ses":"","sd":false,"n":"","cw":49,"iw":0,"sdw":0,"et":""},{"d":"2027-06-30","we":false,"ses":"","sd":false,"n":"","cw":49,"iw":0,"sdw":0,"et":""}];
+// Calendar data — loaded at runtime from calendar_data.json (see bootstrap at bottom)
+let CAL_DATA = [];
 
-// Build lookup
-const dayMap = {};
-CAL_DATA.forEach(d => { dayMap[d.d] = d; });
+// Build lookup (populated in bootstrap once data loads)
+let dayMap = {};
 
 // Timezone-safe date helpers
 function dateStr(d) {
@@ -280,19 +250,11 @@ let currentView = 'month'; // 'month' | 'week'
 let currentDate = new Date(); // today for navigation
 const TODAY = dateStr(new Date());
 
-// Session colors
-const SESSION_COLORS = {
-  'Session 1': { bg: '#eef2ff', border: '#6366f1', text: '#4338ca' },
-  'Session 2': { bg: '#f5f3ff', border: '#8b5cf6', text: '#6d28d9' },
-  'Session 3': { bg: '#ecfeff', border: '#06b6d4', text: '#0e7490' },
-  'Session 4': { bg: '#ecfdf5', border: '#10b981', text: '#047857' },
-  'Session 5': { bg: '#fffbeb', border: '#f59e0b', text: '#92400e' },
-};
-
-const SESSION_CLASSES = {
-  'Session 1': 'session-1', 'Session 2': 'session-2', 'Session 3': 'session-3',
-  'Session 4': 'session-4', 'Session 5': 'session-5',
-};
+// "Session 3" -> 3 (for session-color classes); null otherwise.
+function sessionNum(ses) {
+  const m = (ses || '').match(/Session (\d)/);
+  return m ? Number(m[1]) : null;
+}
 
 const AP_SUBJECT_NAMES = {
   'Bio': 'AP Biology', 'Micro': 'AP Microeconomics', 'Chem': 'AP Chemistry',
@@ -312,7 +274,7 @@ function formatWeekRange(startDate) {
   const end = new Date(startDate);
   end.setDate(end.getDate() + 6);
   const opts = { month: 'short', day: 'numeric' };
-  return `${startDate.toLocaleDateString('en-US', opts)} \u2013 ${end.toLocaleDateString('en-US', opts)}, ${end.getFullYear()}`;
+  return `${startDate.toLocaleDateString('en-US', opts)} – ${end.toLocaleDateString('en-US', opts)}, ${end.getFullYear()}`;
 }
 
 function getMonday(d) {
@@ -328,6 +290,7 @@ function parseEvents(et) {
     if (tag === 'sat_official') return { type: 'sat-official', label: 'SAT Official Test' };
     if (tag === 'sat_practice') return { type: 'sat-practice', label: 'SAT Practice Test' };
     if (tag === 'ap_practice') return { type: 'ap-practice', label: 'AP Practice Test' };
+    if (tag === 'ap_window') return { type: 'ap-window', label: 'AP Exams' };
     if (tag.startsWith('ap_exam:')) {
       const subjects = tag.slice(8).split(',');
       return { type: 'ap-exam', label: subjects.map(s => AP_SUBJECT_NAMES[s] || s).join(', '), subjects };
@@ -336,211 +299,315 @@ function parseEvents(et) {
   }).filter(Boolean);
 }
 
+// Academic year ("2026-27") that a YYYY-MM-DD date belongs to (Aug -> Jul).
+function academicYearOf(ds) {
+  const [y, m] = ds.split('-').map(Number);
+  const start = m >= 8 ? y : y - 1;
+  return `${start}-${String(start + 1).slice(2)}`;
+}
+// Display form with an en-dash ("2025–26").
+function ayDisplay(ay) { return ay.replace('-', '–'); }
+
+function daysBetween(fromDs, toDs) {
+  return Math.round((parseLocalDate(toDs) - parseLocalDate(fromDs)) / 86400000);
+}
+
+// Classify a free-text note into a chip/event style.
+function noteClass(n) {
+  if (/Break/i.test(n)) return 'brk';
+  if (/No School|Holiday|Memorial|MLK|Labou?r|Thanksgiving/i.test(n)) return 'holiday';
+  if (/Session|First Day|Last Day/i.test(n)) return 'session';
+  return 'neutral';
+}
+
+// Notable calendar events (session edges, breaks, holidays, testing windows),
+// deduped to the first day of each run. Drives the "Next Milestone" stat card.
+function cleanMilestone(note) {
+  return note
+    .replace(/\s*\/\s*PM Staff Meetings.*$/i, '')   // "Session 2 Ends / PM Staff Meetings"
+    .replace(/\s*;\s*Staff Meetings.*$/i, '')        // "Session Break; Staff Meetings"
+    .replace(/\s*;.*$/, '')                          // any other "; ..." trailer
+    .replace(/^(First Day of School|Last Day of School)\s*\/.*$/i, '$1')  // drop "/ Session N ..."
+    .replace(/^Thanksgiving Day$/i, 'Thanksgiving Break')  // collapse Day into the Break run
+    .trim();
+}
+// A date's milestone label, drawn from its note (preferred) or its event tag.
+function milestoneLabel(d) {
+  const re = /Session|Break|MAP|Testing|No School|Holiday|MLK|Memorial|Labor|Labour|Thanksgiving|First Day|Last Day/i;
+  const n = d.n || '';
+  if (n && re.test(n)) return cleanMilestone(n);
+  const et = d.et || '';
+  if (et.includes('ap_window') || et.includes('ap_exam')) return 'AP Exams';
+  if (et.includes('sat_official')) return 'SAT Test Day';
+  return null;
+}
+let MILESTONES = null;
+function buildMilestones() {
+  if (MILESTONES) return MILESTONES;
+  const out = [];
+  let prevLabel = null;
+  CAL_DATA.forEach(d => {
+    const label = milestoneLabel(d);
+    if (label) {
+      if (label !== prevLabel) { out.push({ d: d.d, label }); prevLabel = label; }
+    } else {
+      prevLabel = null;
+    }
+  });
+  MILESTONES = out;
+  return out;
+}
+
 function renderStats() {
   const today = dayMap[TODAY];
-  const schoolDaysTotal = CAL_DATA.filter(d => d.sd).length;
-  const schoolDaysPassed = CAL_DATA.filter(d => d.sd && d.d <= TODAY).length;
-  const schoolDaysLeft = schoolDaysTotal - schoolDaysPassed;
-  const nextEvent = CAL_DATA.find(d => d.d >= TODAY && d.et);
-  const apExamDays = CAL_DATA.filter(d => d.et && d.et.includes('ap_exam'));
-  const daysToAP = apExamDays.length > 0 ? Math.ceil((new Date(apExamDays[0].d) - new Date(TODAY)) / 86400000) : null;
-  const nextSAT = CAL_DATA.find(d => d.d >= TODAY && d.et && d.et.includes('sat_official'));
-  const daysToSAT = nextSAT ? Math.ceil((new Date(nextSAT.d) - new Date(TODAY)) / 86400000) : null;
+  const yr = academicYearOf(TODAY);
+
+  // Scope school-day math to the CURRENT academic year only.
+  const yearDays = CAL_DATA.filter(d => academicYearOf(d.d) === yr);
+  const schoolDaysLeft = yearDays.filter(d => d.sd && d.d > TODAY).length;
+  const instrTotal = yearDays.reduce((m, d) => Math.max(m, d.iw || 0), 0);
+  // Instruction week reached so far this year (current if in session, else last passed).
+  const instrNow = yearDays.filter(d => d.d <= TODAY).reduce((m, d) => Math.max(m, d.iw || 0), 0);
+
+  const nextMilestone = buildMilestones().find(m => m.d > TODAY);
 
   let html = '';
-  html += `<div class="stat-card"><div class="stat-value">${today ? (today.iw || '—') : '—'}</div><div class="stat-label">Instruction Week</div></div>`;
-  html += `<div class="stat-card"><div class="stat-value">${schoolDaysLeft}</div><div class="stat-label">School Days Left</div></div>`;
-  if (daysToAP !== null) html += `<div class="stat-card"><div class="stat-value">${daysToAP <= 0 ? 'NOW' : daysToAP}</div><div class="stat-label">${daysToAP <= 0 ? 'AP Exams In Progress' : 'Days to AP Exams'}</div></div>`;
-  if (daysToSAT !== null) html += `<div class="stat-card"><div class="stat-value">${daysToSAT}</div><div class="stat-label">Days to Next SAT</div></div>`;
-  html += `<div class="stat-card"><div class="stat-value">${today ? (today.ses || 'Break') : '—'}</div><div class="stat-label">Current Session</div></div>`;
+  html += `<div class="stat hero"><div class="num">${today ? (today.ses || 'Break') : '—'}</div><div class="lbl">Current session</div></div>`;
+  html += `<div class="stat"><div class="num">${instrNow ? `${instrNow}<small>&nbsp;/&nbsp;${instrTotal}</small>` : '—'}</div><div class="lbl">Instruction week</div></div>`;
+  html += `<div class="stat"><div class="num">${schoolDaysLeft}</div><div class="lbl">School days left &middot; ${ayDisplay(yr)}</div></div>`;
+  if (nextMilestone) {
+    const n = daysBetween(TODAY, nextMilestone.d);
+    const when = n === 0 ? 'today' : n === 1 ? 'in 1 day' : `in ${n} days`;
+    html += `<div class="stat milestone"><div class="num">${nextMilestone.label}</div><div class="lbl">Next milestone &middot; ${when}</div></div>`;
+  } else {
+    html += `<div class="stat milestone"><div class="num">—</div><div class="lbl">Next milestone</div></div>`;
+  }
   document.getElementById('stats-bar').innerHTML = html;
+}
+
+// Set the toolbar period label + session context pill.
+function setPeriod(label, ses) {
+  document.getElementById('period').textContent = label;
+  const pill = document.getElementById('ctxpill');
+  const sn = sessionNum(ses);
+  pill.className = 'ctx-pill' + (sn ? ' s' + sn : ' break');
+  pill.textContent = ses || 'Break';
 }
 
 function renderMonthView() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
 
   // Find Monday of the first week
   let startDay = new Date(firstDay);
   const dow = startDay.getDay();
   startDay.setDate(startDay.getDate() - (dow === 0 ? 6 : dow - 1));
 
-  document.getElementById('title-label').textContent = formatMonth(currentDate);
+  // Period label + context pill (session at mid-month).
+  const midData = dayMap[dateStr(new Date(year, month, 15))];
+  setPeriod(formatMonth(currentDate), midData ? midData.ses : '');
 
-  // Session badge
-  const midMonth = new Date(year, month, 15);
-  const midData = dayMap[dateStr(midMonth)];
-  const badge = document.getElementById('session-badge');
-  if (midData && midData.ses) {
-    const sc = SESSION_COLORS[midData.ses];
-    badge.textContent = midData.ses;
-    badge.style.background = sc.bg;
-    badge.style.color = sc.text;
-    badge.style.display = 'inline-block';
-  } else {
-    badge.style.display = 'none';
-  }
-
-  let html = '<div class="month-grid">';
-  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d => {
-    html += `<div class="day-header">${d}</div>`;
-  });
-
+  let html = '';
   let cursor = new Date(startDay);
   for (let i = 0; i < 42; i++) {
     const ds = dateStr(cursor);
     const data = dayMap[ds];
     const isOtherMonth = cursor.getMonth() !== month;
 
-    let classes = ['day-cell'];
-    if (isOtherMonth) classes.push('other-month');
-    if (data && data.we) classes.push('weekend');
+    const classes = ['cell'];
+    const sn = data ? sessionNum(data.ses) : null;
+    if (sn) classes.push('s' + sn);
+    if (data && data.we) classes.push('wknd');
+    if (data && !data.sd && !data.we && data.n && /Break/i.test(data.n)) classes.push('brk');
+    if (isOtherMonth) classes.push('other');
     if (ds === TODAY) classes.push('today');
-    if (data && data.ses) classes.push(SESSION_CLASSES[data.ses] || '');
-    if (data && !data.sd && !data.we && data.n && (data.n.includes('Break') || data.n.includes('No School') || data.n.includes('Holiday') || data.n.includes('Memorial') || data.n.includes('MLK') || data.n.includes('Labour') || data.n.includes('Thanksgiving'))) {
-      if (data.n.includes('Break')) classes.push('break');
-      else classes.push('holiday');
-    }
 
-    html += `<div class="${classes.join(' ')}" data-date="${ds}" onclick="clickDay('${ds}')">`;
-    html += `<div class="day-num">${cursor.getDate()}</div>`;
-
+    let evs = '';
     if (data && !isOtherMonth) {
-      html += '<div class="events">';
       const events = parseEvents(data.et);
       events.forEach(ev => {
         if (ev.type === 'ap-exam') {
-          ev.subjects.forEach(s => {
-            html += `<div class="event-badge ap-exam">${AP_SUBJECT_NAMES[s] || s}</div>`;
-          });
+          ev.subjects.forEach(s => { evs += `<div class="chip apexam">${AP_SUBJECT_NAMES[s] || s}</div>`; });
+        } else if (ev.type === 'ap-window') {
+          evs += `<div class="chip apexam">AP Exams</div>`;
         } else if (ev.type === 'ap-practice') {
-          html += `<div class="event-badge ap-practice">AP Practice</div>`;
+          evs += `<div class="chip appr">AP Practice</div>`;
         } else if (ev.type === 'sat-official') {
-          html += `<div class="event-badge sat-official">SAT Test Day</div>`;
+          evs += `<div class="chip satoff">SAT Test Day</div>`;
         } else if (ev.type === 'sat-practice') {
-          html += `<div class="event-badge sat-practice">SAT Practice</div>`;
+          evs += `<div class="chip satpr">SAT Practice</div>`;
         }
       });
-      // Show notes (truncated)
+      // Note chip (only when no event tag occupies the cell).
       if (data.n && !data.et) {
-        const short = data.n.length > 20 ? data.n.slice(0, 18) + '...' : data.n;
-        if (data.n.includes('Break') || data.n.includes('Holiday') || data.n.includes('No School') || data.n.includes('Memorial') || data.n.includes('Thanksgiving') || data.n.includes('MLK') || data.n.includes('Labour')) {
-          html += `<div class="event-badge holiday">${short}</div>`;
-        } else if (data.n) {
-          html += `<div class="event-badge note">${short}</div>`;
-        }
+        evs += `<div class="chip ${noteClass(data.n)}">${data.n}</div>`;
       }
-      html += '</div>';
     }
-    html += '</div>';
+
+    html += `<div class="${classes.join(' ')}" data-date="${ds}" onclick="clickDay('${ds}')">`
+      + `<span class="sbar"></span><div class="dn">${cursor.getDate()}</div>`
+      + `<div class="evs">${evs}</div></div>`;
     cursor.setDate(cursor.getDate() + 1);
 
-    // Stop after 5 or 6 weeks
+    // Stop after 5 weeks if the 6th row would be entirely next month.
     if (i >= 34 && cursor.getMonth() !== month) break;
   }
-  html += '</div>';
-  document.getElementById('month-view').innerHTML = html;
+  document.getElementById('month-grid').innerHTML = html;
 }
 
 function renderWeekView() {
   const monday = getMonday(currentDate);
-  document.getElementById('title-label').textContent = formatWeekRange(monday);
 
-  // Find week data
   const weekDays = [];
   const cursor = new Date(monday);
   for (let i = 0; i < 7; i++) {
     const ds = dateStr(cursor);
-    weekDays.push({ date: ds, data: dayMap[ds] || null, dow: cursor.getDay() });
+    weekDays.push({ date: ds, data: dayMap[ds] || null });
     cursor.setDate(cursor.getDate() + 1);
   }
 
-  // Summary
-  const firstData = weekDays.find(w => w.data);
-  const session = firstData && firstData.data ? firstData.data.ses : '';
-  const iw = firstData && firstData.data ? firstData.data.iw : 0;
-  const sdw = firstData && firstData.data ? firstData.data.sdw : 0;
-  const cw = firstData && firstData.data ? firstData.data.cw : 0;
+  // Summary (from the first day in the week that has data).
+  const firstData = (weekDays.find(w => w.data) || {}).data || null;
+  const session = firstData ? firstData.ses : '';
+  const iw = firstData ? firstData.iw : 0;
+  const sdw = firstData ? firstData.sdw : 0;
+  const cw = firstData ? firstData.cw : 0;
   const weekEvents = weekDays.filter(w => w.data && w.data.et).length;
 
-  // Session badge
-  const badge = document.getElementById('session-badge');
-  if (session) {
-    const sc = SESSION_COLORS[session];
-    badge.textContent = session;
-    badge.style.background = sc.bg;
-    badge.style.color = sc.text;
-    badge.style.display = 'inline-block';
-  } else {
-    badge.textContent = 'Break';
-    badge.style.background = '#f5f5f0';
-    badge.style.color = '#999';
-    badge.style.display = 'inline-block';
-  }
+  setPeriod(formatWeekRange(monday), session);
 
-  let html = '<div class="week-summary">';
-  html += `<span><strong>Session:</strong> ${session || 'Break'}</span>`;
-  html += `<span><strong>Instruction Week:</strong> ${iw || '—'}</span>`;
-  html += `<span><strong>Calendar Week:</strong> ${cw}</span>`;
-  html += `<span><strong>School Days:</strong> ${sdw}</span>`;
-  if (weekEvents > 0) html += `<span><strong>Events:</strong> ${weekEvents}</span>`;
-  html += '</div>';
+  let meta = '';
+  meta += `<span>Session: <b>${session || 'Break'}</b></span>`;
+  meta += `<span>Instruction week: <b>${iw || '—'}</b></span>`;
+  meta += `<span>Calendar week: <b>${cw || '—'}</b></span>`;
+  meta += `<span>School days: <b>${sdw || 0}</b></span>`;
+  if (weekEvents > 0) meta += `<span>Events: <b>${weekEvents}</b></span>`;
+  document.getElementById('week-meta').innerHTML = meta;
 
-  html += '<div class="week-grid">';
   const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  let html = '';
   weekDays.forEach((wd, i) => {
     const data = wd.data;
-    let classes = ['week-day'];
-    if (i >= 5) classes.push('weekend');
+    const classes = ['wcol'];
+    if (i >= 5) classes.push('dim');
+    if (data && !data.sd && !data.we && data.n && /Break/i.test(data.n)) classes.push('brk');
+    else if (data && !data.sd && !data.we && data.n) classes.push('holiday');
     if (wd.date === TODAY) classes.push('today');
-    if (data && !data.sd && !data.we && data.n && (data.n.includes('Break') || data.n.includes('No School') || data.n.includes('Holiday') || data.n.includes('Memorial') || data.n.includes('Thanksgiving') || data.n.includes('MLK') || data.n.includes('Labour'))) {
-      classes.push('holiday');
-    }
 
-    html += `<div class="${classes.join(' ')}">`;
-    html += '<div class="week-day-header">';
-    html += `<div class="week-day-name">${dayNames[i]}</div>`;
-    html += `<div class="week-day-num">${dayOfDate(wd.date)}</div>`;
-    html += '</div>';
-
-    html += '<div class="week-events">';
+    let body = '';
     if (data) {
       const events = parseEvents(data.et);
       events.forEach(ev => {
         if (ev.type === 'ap-exam') {
-          ev.subjects.forEach(s => {
-            html += `<div class="week-event ap-exam"><div class="event-title">${AP_SUBJECT_NAMES[s] || s}</div><div class="event-detail">AP Exam &bull; 8:00 AM</div></div>`;
-          });
+          ev.subjects.forEach(s => { body += `<div class="wev apexam"><div class="t">${AP_SUBJECT_NAMES[s] || s}</div><div class="d">AP Exam &bull; 8:00 AM</div></div>`; });
+        } else if (ev.type === 'ap-window') {
+          body += `<div class="wev apexam"><div class="t">AP Exams</div><div class="d">AP exam window &bull; subjects TBD</div></div>`;
         } else if (ev.type === 'ap-practice') {
-          html += `<div class="week-event ap-practice"><div class="event-title">AP Practice Test</div><div class="event-detail">Full-length practice exam</div></div>`;
+          body += `<div class="wev appr"><div class="t">AP Practice Test</div><div class="d">Full-length practice exam</div></div>`;
         } else if (ev.type === 'sat-official') {
-          html += `<div class="week-event sat-official"><div class="event-title">SAT Test Day</div><div class="event-detail">Official College Board administration</div></div>`;
+          body += `<div class="wev satoff"><div class="t">SAT Test Day</div><div class="d">Official College Board administration</div></div>`;
         } else if (ev.type === 'sat-practice') {
-          html += `<div class="week-event sat-practice"><div class="event-title">SAT Practice Test</div><div class="event-detail">Full-length Bluebook practice</div></div>`;
+          body += `<div class="wev satpr"><div class="t">SAT Practice Test</div><div class="d">Full-length Bluebook practice</div></div>`;
         }
       });
       if (data.n) {
-        const noteClass = (data.n.includes('Break') || data.n.includes('No School') || data.n.includes('Holiday') || data.n.includes('Memorial') || data.n.includes('Thanksgiving')) ? 'holiday' : 'note';
-        // Don't duplicate if already shown via events
-        html += `<div class="week-event note"><div class="event-title">${data.n}</div></div>`;
+        body += `<div class="wev ${noteClass(data.n)}"><div class="t">${data.n}</div></div>`;
       }
     }
-    html += '</div>';
 
-    // Meta at bottom
-    if (data && data.sd) {
-      html += `<div class="week-day-meta">School day</div>`;
-    } else if (data && !data.we) {
-      html += `<div class="week-day-meta">No school</div>`;
-    }
+    let foot = '';
+    if (data && data.sd) foot = 'School day';
+    else if (data && !data.we) foot = 'No school';
 
-    html += '</div>';
+    html += `<div class="${classes.join(' ')}">`
+      + `<div class="whd"><div class="wdow">${dayNames[i]}</div><div class="wnum">${dayOfDate(wd.date)}</div></div>`
+      + `<div class="wbody">${body}</div>`
+      + (foot ? `<div class="foot">${foot}</div>` : '')
+      + `</div>`;
   });
-  html += '</div>';
+  document.getElementById('week-grid').innerHTML = html;
+}
 
-  document.getElementById('week-view').innerHTML = html;
+// --- Navigation controls: academic-year toggle + per-year month dropdown ---
+const MONTH_NAMES = ['January','February','March','April','May','June',
+  'July','August','September','October','November','December'];
+
+// Distinct academic years present in the data, in chronological order.
+let ACADEMIC_YEARS = [];
+function computeAcademicYears() {
+  const seen = new Set();
+  ACADEMIC_YEARS = [];
+  CAL_DATA.forEach(d => {
+    const ay = academicYearOf(d.d);
+    if (!seen.has(ay)) { seen.add(ay); ACADEMIC_YEARS.push(ay); }
+  });
+}
+
+function currentAcademicYear() {
+  return academicYearOf(dateStr(currentDate));
+}
+
+// One segmented pill per academic year. Picking a year jumps to a sensible month
+// within it: today if today falls in that year, otherwise the year's first month.
+function buildYearToggle() {
+  const el = document.getElementById('year-seg');
+  if (!el) return;
+  el.innerHTML = ACADEMIC_YEARS
+    .map(ay => `<button data-year="${ay}" onclick="selectYear('${ay}')">${ayDisplay(ay)}</button>`)
+    .join('');
+}
+
+function firstDateOfAcademicYear(ay) {
+  const days = CAL_DATA.filter(d => academicYearOf(d.d) === ay);
+  return days.length ? days[0].d : null;
+}
+
+function selectYear(ay) {
+  if (ay === currentAcademicYear()) return;
+  const target = (academicYearOf(TODAY) === ay) ? TODAY : firstDateOfAcademicYear(ay);
+  if (!target) return;
+  currentDate = parseLocalDate(target);
+  if (currentView === 'week') setView('month');  // setView() re-renders
+  else render();
+}
+
+// Month dropdown scoped to the selected academic year only (Aug -> Jun, etc.).
+function buildMonthSelect() {
+  const sel = document.getElementById('month-select');
+  if (!sel) return;
+  const ay = currentAcademicYear();
+  const months = [];
+  const seen = new Set();
+  CAL_DATA.forEach(d => {
+    if (academicYearOf(d.d) !== ay) return;
+    const key = d.d.slice(0, 7);  // YYYY-MM
+    if (!seen.has(key)) { seen.add(key); months.push(key); }
+  });
+  sel.innerHTML = months.map(key => {
+    const [y, m] = key.split('-').map(Number);
+    return `<option value="${y}-${String(m).padStart(2, '0')}">${MONTH_NAMES[m - 1]} ${y}</option>`;
+  }).join('');
+}
+
+function jumpToMonth(value) {
+  const [y, m] = value.split('-').map(Number);
+  currentDate = new Date(y, m - 1, 1, 12, 0, 0);
+  // Jumping by month is a month-view action; switch the view if needed.
+  if (currentView === 'week') setView('month');  // setView() re-renders
+  else render();
+}
+
+// Keep the year pills + month dropdown in sync with currentDate. The month list
+// is year-scoped, so rebuild it whenever the active year changes.
+let _syncedYear = null;
+function syncControls() {
+  const ay = currentAcademicYear();
+  document.querySelectorAll('#year-seg button').forEach(b =>
+    b.classList.toggle('on', b.dataset.year === ay));
+  if (ay !== _syncedYear) { buildMonthSelect(); _syncedYear = ay; }
+  const sel = document.getElementById('month-select');
+  if (sel) sel.value = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
 }
 
 function render() {
@@ -550,14 +617,15 @@ function render() {
   } else {
     renderWeekView();
   }
+  syncControls();
 }
 
 function setView(view) {
   currentView = view;
-  document.getElementById('btn-month').classList.toggle('active', view === 'month');
-  document.getElementById('btn-week').classList.toggle('active', view === 'week');
-  document.getElementById('month-view').classList.toggle('active', view === 'month');
-  document.getElementById('week-view').classList.toggle('active', view === 'week');
+  document.querySelectorAll('#view-seg button').forEach(b =>
+    b.classList.toggle('on', b.dataset.view === view));
+  document.getElementById('view-month').classList.toggle('hidden', view !== 'month');
+  document.getElementById('view-week').classList.toggle('hidden', view !== 'week');
   render();
 }
 
@@ -589,8 +657,9 @@ function clickDay(ds) {
   setView('week');
 }
 
-// Keyboard nav
+// Keyboard nav (no-op until data has loaded)
 document.addEventListener('keydown', e => {
+  if (!CAL_DATA.length) return;
   if (e.key === 'ArrowLeft') goPrev();
   if (e.key === 'ArrowRight') goNext();
   if (e.key === 'm') setView('month');
@@ -598,8 +667,48 @@ document.addEventListener('keydown', e => {
   if (e.key === 't') goToday();
 });
 
-// Init
-render();
+// --- Bootstrap: load data from JSON, then build controls and render. ---
+function showBanner(kind, html) {
+  const el = document.getElementById('status-banner');
+  el.className = 'status-banner ' + kind;
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+function hideBanner() {
+  document.getElementById('status-banner').style.display = 'none';
+}
+
+async function init() {
+  showBanner('loading', 'Loading calendar data…');
+  let data;
+  try {
+    const res = await fetch('calendar_data.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    data = await res.json();
+  } catch (err) {
+    // file:// opens can't fetch (browser CORS on local files); guide the user.
+    const isFileProto = location.protocol === 'file:';
+    showBanner('error', isFileProto
+      ? 'This page loads its data with <code>fetch()</code>, which browsers block when opened directly from disk (<code>file://</code>). Serve the folder instead — e.g. <code>python -m http.server</code> in <code>ahs-visuals/</code>, then open <code>http://localhost:8000/academic-calendar.html</code>.'
+      : `Could not load <code>calendar_data.json</code> (${err.message}).`);
+    return;
+  }
+  if (!Array.isArray(data) || !data.length) {
+    showBanner('error', 'calendar_data.json was empty or malformed.');
+    return;
+  }
+
+  CAL_DATA = data;
+  dayMap = {};
+  CAL_DATA.forEach(d => { dayMap[d.d] = d; });
+  computeAcademicYears();
+  buildYearToggle();
+
+  hideBanner();
+  render();
+}
+
+init();
 </script>
 </body>
 </html>
