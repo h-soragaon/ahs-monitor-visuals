@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AHS Monitor V2 — Project Map</title>
+<style>
+  /* ----------------------------------------------------------------------
+     AHS Monitor V2 — whole-project structure map.
+     Self-contained (no fetch / no external assets) so it opens from file://.
+     Palette + type lifted from design/tokens/ (warm neutrals, indigo accent,
+     six signal hues). Two views: an interactive directory network and a
+     data-flow diagram. Both pull generated data (TREE + PIPELINES) injected by
+     ahs-visuals/build_project_map.py — the directory structure, per-pipeline
+     script counts, last-run dates, and QC freshness all come from the real repo.
+     The flow diagram's narrative copy (the LAYERS array) is hand-curated; its
+     ingestion cards are generated.
+  ---------------------------------------------------------------------- */
+  :root {
+    --bg-page:   #FAFAF7;
+    --warm-100:  #F4F4F0;
+    --warm-200:  #ECECEA;
+    --warm-300:  #D8D7CE;
+    --warm-400:  #B0AFA4;
+    --muted:     #6B6B76;
+    --warm-700:  #474640;
+    --ink:       #1A1A1F;
+    --white:     #FFFFFF;
+
+    --accent:        #4F46E5;
+    --accent-hover:  #4338CA;
+    --accent-tint:   #EEF0FF;
+    --accent-border: #C7CBF9;
+
+    /* signal hues — reused to color-code the layers */
+    --src-fg:   #B54708;  --src-tint:   #FFFAEB;  --src-border: #FEDF89;  /* sources / edges */
+    --ing-fg:   #5925DC;  --ing-tint:   #F4F3FF;  --ing-border: #D9D6FE;  /* ingestion */
+    --hub-fg:   #067647;  --hub-tint:   #ECFDF3;  --hub-border: #ABEFC6;  /* warehouse */
+    --phase-fg: #B42318;  --phase-tint: #FEF3F2;  --phase-border: #FECDCA;/* phases */
+    --out-fg:   #0E7090;  --out-tint:   #ECFDFF;  --out-border: #A5E8F2;  /* consumption */
+    --inf-fg:   #475467;  --inf-tint:   #F2F4F7;  --inf-border: #D0D5DD;  /* infra */
+
+    --radius: 12px;
+    --radius-sm: 8px;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  * , *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg-page);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+  h1, h2, h3 { margin: 0; font-weight: 600; line-height: 1.2; color: var(--ink); }
+  p { margin: 0; }
+
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  /* ---- header ---- */
+  header { margin-bottom: 8px; }
+  .eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  h1 { font-size: 28px; margin-top: 6px; }
+  .sub { font-size: 14px; color: var(--muted); margin-top: 8px; max-width: 760px; }
+
+  /* ---- KPI strip ---- */
+  .kpis {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;
+    margin: 28px 0 36px;
+  }
+  .kpi {
+    background: var(--white); border: 1px solid var(--warm-200);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+  }
+  .kpi .num { font-size: 26px; font-weight: 600; line-height: 1; }
+  .kpi .lab {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--muted); margin-top: 8px;
+  }
+
+  /* ---- legend ---- */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-bottom: 28px; }
+  .legend .item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--warm-700); }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; border: 1px solid rgba(0,0,0,.08); }
+
+  /* ---- section heading (shared) ---- */
+  .section-h {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted); margin: 8px 0 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-h::after { content: ""; flex: 1; height: 1px; background: var(--warm-200); }
+
+  /* ---- network / tree diagram ---- */
+  .net-wrap {
+    border: 1px solid var(--warm-200); border-radius: var(--radius);
+    background: var(--white); padding: 8px; margin-bottom: 40px; overflow: hidden;
+  }
+  .net-wrap svg { display: block; width: 100%; height: auto; }
+  .net-link { fill: none; stroke: var(--warm-300); stroke-width: 1.1px; }
+  .net-node circle { stroke: var(--white); stroke-width: 1.5px; cursor: default; }
+  .net-node text {
+    font-family: var(--font-sans); font-size: 10.5px; fill: var(--warm-700);
+    dominant-baseline: middle;
+  }
+  .net-node.root text { font-size: 13px; font-weight: 700; fill: var(--ink); }
+  .net-node.l1 text { font-weight: 600; fill: var(--ink); font-size: 11.5px; }
+  .net-node { cursor: default; }
+  .net-node.expandable { cursor: pointer; }
+  .net-node.expandable circle { stroke: var(--accent-border); }
+  .net-node:hover circle { stroke: var(--accent); stroke-width: 2px; }
+  .net-node.dim { opacity: 0.16; }
+  .net-node.match circle { stroke: var(--accent); stroke-width: 2.5px; }
+  .net-node.match text { fill: var(--accent-hover); font-weight: 700; }
+  .net-link.dim { opacity: 0.08; }
+  .net-link { transition: opacity .15s; }
+  .net-node { transition: opacity .15s; }
+
+  /* expandable nodes get a faint ring to signal "click me" */
+  .net-node.expandable .halo { fill: none; stroke: var(--accent-border); stroke-width: 1px; opacity: .9; }
+
+  /* ---- toolbar + tooltip ---- */
+  .net-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .net-toolbar input[type="search"] {
+    flex: 0 0 280px; padding: 7px 11px; font: inherit; font-size: 12.5px;
+    border: 1px solid var(--warm-300); border-radius: var(--radius-sm);
+    background: var(--white); color: var(--ink); outline: none;
+  }
+  .net-toolbar input[type="search"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-tint); }
+  .net-toolbar button {
+    font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;
+    padding: 7px 12px; border-radius: var(--radius-sm);
+    border: 1px solid var(--warm-300); background: var(--white); color: var(--warm-700);
+  }
+  .net-toolbar button:hover { border-color: var(--accent); color: var(--accent-hover); background: var(--accent-tint); }
+  .net-toolbar button[aria-pressed="true"] {
+    background: var(--accent); color: var(--white); border-color: var(--accent);
+  }
+  .net-hint { font-size: 11px; color: var(--warm-400); margin-left: auto; }
+
+  .fresh-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: -2px 0 12px; }
+  .fresh-legend .item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--warm-700); }
+  .fresh-legend .sw { width: 11px; height: 11px; border-radius: 999px; border: 1px solid rgba(0,0,0,.12); }
+
+  .net-tip {
+    position: fixed; z-index: 20; pointer-events: none; max-width: 260px;
+    background: var(--ink); color: var(--white); border-radius: var(--radius-sm);
+    padding: 8px 11px; font-size: 11.5px; line-height: 1.45;
+    box-shadow: 0 6px 22px rgba(26,26,31,.22);
+  }
+  .net-tip .tip-name { font-weight: 700; font-size: 12px; }
+  .net-tip .tip-meta { color: var(--warm-300); margin-top: 3px; font-size: 10.5px; }
+
+  /* ---- flow arrow between bands ---- */
+  .flow {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; color: var(--muted); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase; margin: 6px 0;
+  }
+  .flow::before, .flow::after {
+    content: ""; height: 1px; flex: 0 0 60px; background: var(--warm-300);
+  }
+  .flow .arrow { font-size: 14px; color: var(--warm-400); }
+
+  /* ---- layer band ---- */
+  .band {
+    border: 1px solid var(--warm-200); border-radius: var(--radius);
+    background: var(--white); padding: 18px 18px 20px; margin-bottom: 4px;
+    position: relative; overflow: hidden;
+  }
+  .band::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--band-accent, var(--warm-300));
+  }
+  .band-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; padding-left: 6px; }
+  .band-head h2 { font-size: 16px; }
+  .band-head .tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 999px;
+    color: var(--band-fg); background: var(--band-tint); border: 1px solid var(--band-border);
+  }
+  .band-head .note { font-size: 12px; color: var(--muted); margin-left: auto; }
+  .band-desc { font-size: 12.5px; color: var(--muted); padding-left: 6px; margin-bottom: 14px; max-width: 880px; }
+
+  /* ---- cards inside a band ---- */
+  .cards { display: grid; gap: 10px; padding-left: 6px; }
+  .cards.c2 { grid-template-columns: repeat(2, 1fr); }
+  .cards.c3 { grid-template-columns: repeat(3, 1fr); }
+  .cards.c4 { grid-template-columns: repeat(4, 1fr); }
+  .cards.c5 { grid-template-columns: repeat(5, 1fr); }
+
+  .card {
+    border: 1px solid var(--warm-200); border-radius: var(--radius-sm);
+    background: var(--bg-page); padding: 11px 12px; min-height: 0;
+  }
+  .card .t { font-size: 12.5px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+  .card .chip {
+    margin-left: auto; font-size: 9.5px; font-weight: 700; letter-spacing: 0.03em;
+    text-transform: uppercase; padding: 1.5px 6px; border-radius: 999px;
+    border: 1px solid; white-space: nowrap; cursor: default;
+  }
+  .card .d { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+  .card .meta { font-size: 10px; color: var(--warm-400); margin-top: 7px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+  .card .pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .pill {
+    font-size: 10px; padding: 1.5px 6px; border-radius: 5px;
+    background: var(--white); border: 1px solid var(--warm-200); color: var(--warm-700);
+    font-weight: 500;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 999px; flex: 0 0 auto; }
+
+  /* phase cards get numbered + accent ring */
+  .phasecard { position: relative; }
+  .phasecard .pn {
+    position: absolute; top: 10px; right: 11px; font-size: 11px; font-weight: 700;
+    color: var(--phase-fg); opacity: .55;
+  }
+
+  .footer { margin-top: 36px; font-size: 11px; color: var(--warm-400); text-align: center; line-height: 1.7; }
+  .footer code { background: var(--warm-100); padding: 1px 5px; border-radius: 4px; color: var(--warm-700); }
+
+  @media (max-width: 1000px) {
+    .kpis { grid-template-columns: repeat(3, 1fr); }
+    .cards.c5, .cards.c4 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .cards.c5, .cards.c4, .cards.c3, .cards.c2 { grid-template-columns: 1fr; }
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">AHS Monitor V2 · System Map</div>
+    <h1>The whole project, on one page</h1>
+    <p class="sub">
+      An educational data warehouse that tracks student learning across many courseware
+      platforms. Data flows left-to-right: <strong>external sources</strong> (the edges) →
+      platform <strong>ingestion</strong> pipelines → a central <strong>warehouse</strong>
+      (the single source of truth) → student-lifecycle <strong>phases</strong> →
+      <strong>consumption</strong> surfaces. Everything is file-based CSV; promotion to
+      production is gated on QC.
+    </p>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+  <div class="legend" id="legend"></div>
+
+  <div class="section-h">Repository structure — directory network</div>
+  <div class="net-toolbar">
+    <input id="net-search" type="search" placeholder="Search folders…  (e.g. edmentum, facts)" autocomplete="off" />
+    <button id="net-expand" type="button">Expand all</button>
+    <button id="net-collapse" type="button">Collapse all</button>
+    <button id="net-fresh" type="button" aria-pressed="false">Pipeline freshness</button>
+    <span class="net-hint">Click a ringed node to expand · size = file count · toggle freshness to color pipelines by last run</span>
+  </div>
+  <div id="net-fresh-legend" class="fresh-legend" hidden></div>
+  <div class="net-wrap">
+    <svg id="net" viewBox="0 0 1200 1000" role="img"
+         aria-label="Interactive radial network of the AHS Monitor V2 directory tree"></svg>
+  </div>
+  <div id="net-tip" class="net-tip" hidden></div>
+
+  <div class="section-h">Data flow — how the pieces connect</div>
+  <div id="diagram"></div>
+
+  <div class="footer">
+    Generated by <code>python ahs-visuals/build_project_map.py</code> (directory tree + pipeline freshness) ·
+    publish with <code>python deploy_visuals.py --only project-map</code><br>
+    Re-run the generator after structural changes or pipeline runs — the network, ingestion cards, and KPIs all reflect the live repo &amp; each pipeline's <code>logs/</code>. Flow narrative follows the <code>CLAUDE.md</code> architecture.
+  </div>
+</div>
+
+<script>
+/* BEGIN DATA (generated by build_project_map.py — do not edit by hand) */
+const TREE = {"name":"ahs-monitor-v2","c":"accent","files":2148,"children":[{"name":"ahs-visuals","c":"out","files":5},{"name":"argus","c":"phase","files":29,"children":[{"name":"input","c":"phase","files":3},{"name":"output","c":"phase","files":7},{"name":"scripts","c":"phase","files":6},{"name":"signal","c":"phase","files":2},{"name":"tests","c":"phase","files":2}]},{"name":"brainlifts","c":"out","files":91,"children":[{"name":"active","c":"out","files":9},{"name":"changelog","c":"out","files":57,"children":[{"name":"input","c":"out","files":33}]},{"name":"full","c":"out","files":12},{"name":"inbox","c":"out","files":4,"children":[{"name":"input","c":"out","files":0},{"name":"raw","c":"out","files":0}]},{"name":"old","c":"out","files":1}]},{"name":"context","c":"inf","files":1},{"name":"dashboard","c":"out","files":46,"children":[{"name":"backend","c":"out","files":0},{"name":"frontend","c":"out","files":34,"children":[{"name":"public","c":"out","files":2},{"name":"src","c":"out","files":21}]},{"name":"worker","c":"out","files":12,"children":[{"name":"migrations","c":"out","files":5},{"name":"src","c":"out","files":1}]}]},{"name":"design","c":"out","files":22,"children":[{"name":"prototypes","c":"out","files":15,"children":[{"name":"2026-06-grain-matrix","c":"out","files":6},{"name":"2026-06-hs-roster","c":"out","files":9}]},{"name":"tokens","c":"out","files":6}]},{"name":"discrete_tasks","c":"inf","files":101,"children":[{"name":"academic_calendar","c":"inf","files":1},{"name":"alpha_anywhere_egumpp_check","c":"inf","files":3},{"name":"ap","c":"inf","files":9,"children":[{"name":"ap_practice_tests_apr_27_may_1","c":"inf","files":4}]},{"name":"coaching","c":"inf","files":7},{"name":"credits_checklist","c":"inf","files":3},{"name":"edmentum_renewal","c":"inf","files":4},{"name":"english_cbe_tests","c":"inf","files":2},{"name":"enrollment_cleanup","c":"inf","files":8},{"name":"map_analysis","c":"inf","files":7},{"name":"notice_rebut","c":"inf","files":49,"children":[{"name":"aiusagereport","c":"inf","files":21},{"name":"coachingfeedback","c":"inf","files":12}]},{"name":"sat","c":"inf","files":2},{"name":"subject_enrollments","c":"inf","files":3},{"name":"tools","c":"inf","files":2}]},{"name":"docs","c":"inf","files":860,"children":[{"name":"andy_docs","c":"inf","files":1},{"name":"api_docs","c":"inf","files":799,"children":[{"name":"alphatest","c":"inf","files":2},{"name":"aphistoryforge","c":"inf","files":1},{"name":"austinway","c":"inf","files":1},{"name":"edmentum","c":"inf","files":2},{"name":"mathacademy","c":"inf","files":1},{"name":"pct-complete","c":"inf","files":1},{"name":"timeback","c":"inf","files":790},{"name":"workflowy","c":"inf","files":1}]},{"name":"argus","c":"inf","files":11,"children":[{"name":"phases","c":"inf","files":5},{"name":"visuals","c":"inf","files":3}]},{"name":"design_docs","c":"inf","files":2},{"name":"handover","c":"inf","files":6},{"name":"ilma","c":"inf","files":1},{"name":"reference_repos","c":"inf","files":3},{"name":"signal","c":"inf","files":3},{"name":"superpowers","c":"inf","files":27,"children":[{"name":"plans","c":"inf","files":11},{"name":"specs","c":"inf","files":16}]}]},{"name":"engagement","c":"out","files":9,"children":[{"name":"scripts","c":"out","files":6}]},{"name":"learning_apps","c":"ing","files":750,"children":[{"name":"alpharead","c":"ing","files":5,"children":[{"name":"logs","c":"ing","files":0},{"name":"scripts","c":"ing","files":3},{"name":"staging","c":"ing","files":1}]},{"name":"alphatest","c":"ing","files":60,"children":[{"name":"alpha_math_g10.1_test","c":"ing","files":3},{"name":"alphatest_input_csv","c":"ing","files":12},{"name":"full_detail_input","c":"ing","files":1},{"name":"full_detail_staging","c":"ing","files":2},{"name":"logs","c":"ing","files":14},{"name":"scripts","c":"ing","files":10},{"name":"staging","c":"ing","files":5},{"name":"tripti_automation_script","c":"ing","files":2}]},{"name":"alphatok","c":"ing","files":2},{"name":"apclassroom","c":"ing","files":23,"children":[{"name":"apclassroom_input_csv","c":"ing","files":13},{"name":"logs","c":"ing","files":4},{"name":"output","c":"ing","files":1},{"name":"scripts","c":"ing","files":2},{"name":"staging","c":"ing","files":1}]},{"name":"aphistoryforge","c":"ing","files":16,"children":[{"name":"logs","c":"ing","files":1},{"name":"scripts","c":"ing","files":7},{"name":"staging","c":"ing","files":6}]},{"name":"crush_ap","c":"ing","files":122,"children":[{"name":"crush_ap_input_csv","c":"ing","files":62},{"name":"logs","c":"ing","files":49},{"name":"scripts","c":"ing","files":7},{"name":"staging","c":"ing","files":2}]},{"name":"edmentum","c":"ing","files":313,"children":[{"name":"edmentum_input_csv","c":"ing","files":279},{"name":"logs","c":"ing","files":14},{"name":"scripts","c":"ing","files":12},{"name":"staging","c":"ing","files":3}]},{"name":"egumpp","c":"ing","files":48,"children":[{"name":"egumpp_input_csv","c":"ing","files":11},{"name":"logs","c":"ing","files":13},{"name":"output","c":"ing","files":1},{"name":"scripts","c":"ing","files":11},{"name":"staging","c":"ing","files":4},{"name":"tests","c":"ing","files":3}]},{"name":"map","c":"ing","files":8,"children":[{"name":"logs","c":"ing","files":3},{"name":"scripts","c":"ing","files":3},{"name":"staging","c":"ing","files":2}]},{"name":"mathacademy","c":"ing","files":24,"children":[{"name":"logs","c":"ing","files":13},{"name":"scripts","c":"ing","files":6},{"name":"staging","c":"ing","files":2}]},{"name":"runestone","c":"ing","files":107,"children":[{"name":"logs","c":"ing","files":49},{"name":"runestone_input_csv","c":"ing","files":50},{"name":"scripts","c":"ing","files":6},{"name":"staging","c":"ing","files":1}]},{"name":"timeback","c":"ing","files":21,"children":[{"name":"logs","c":"ing","files":10},{"name":"scripts","c":"ing","files":7},{"name":"staging","c":"ing","files":2}]}]},{"name":"logs","c":"inf","files":0},{"name":"meeting_prep","c":"inf","files":1},{"name":"phases","c":"phase","files":50,"children":[{"name":"ap","c":"phase","files":41,"children":[{"name":"docs","c":"phase","files":2},{"name":"logs","c":"phase","files":6},{"name":"output","c":"phase","files":6},{"name":"scripts","c":"phase","files":26}]},{"name":"credits","c":"phase","files":5,"children":[{"name":"scripts","c":"phase","files":3}]},{"name":"g8_mastery","c":"phase","files":2},{"name":"sat","c":"phase","files":1,"children":[{"name":"score_reports","c":"phase","files":1}]}]},{"name":"scripts","c":"inf","files":2},{"name":"tasks","c":"inf","files":9},{"name":"tests","c":"inf","files":11,"children":[{"name":"alphatest","c":"inf","files":5,"children":[{"name":"fixtures","c":"inf","files":1}]},{"name":"egumpp","c":"inf","files":3},{"name":"warehouse","c":"inf","files":2}]},{"name":"warehouse","c":"hub","files":161,"children":[{"name":"dimensions","c":"hub","files":98,"children":[{"name":"academic_calendar","c":"hub","files":3},{"name":"alphatest","c":"hub","files":1},{"name":"aphistoryforge","c":"hub","files":3},{"name":"campuses","c":"hub","files":1},{"name":"courses","c":"hub","files":1},{"name":"enrollments","c":"hub","files":2},{"name":"learning_paths","c":"hub","files":1},{"name":"legacy_tables","c":"hub","files":7},{"name":"lesson_details","c":"hub","files":26},{"name":"mapping_tables","c":"hub","files":9},{"name":"practice_tests","c":"hub","files":39},{"name":"students","c":"hub","files":5}]},{"name":"facts","c":"hub","files":47,"children":[{"name":"alpharead","c":"hub","files":1},{"name":"alphatest","c":"hub","files":6},{"name":"apclassroom","c":"hub","files":1},{"name":"aphistoryforge","c":"hub","files":6},{"name":"crush_ap","c":"hub","files":2},{"name":"edmentum","c":"hub","files":4},{"name":"egumpp","c":"hub","files":4},{"name":"engagement","c":"hub","files":1},{"name":"legacy","c":"hub","files":7},{"name":"map","c":"hub","files":2},{"name":"mathacademy","c":"hub","files":5},{"name":"overrides","c":"hub","files":2},{"name":"practice_tests","c":"hub","files":4},{"name":"runestone","c":"hub","files":1},{"name":"timeback","c":"hub","files":1}]},{"name":"scripts","c":"hub","files":5},{"name":"utils","c":"hub","files":10}]}]};
+const PIPELINES = [{"name":"alpharead","desc":"Reading facts (Timeback client).","kind":"REST API","scripts":3,"lastRun":null,"ageDays":null,"qc":"unknown","fresh":"unknown"},{"name":"alphatest","desc":"CSV + HGM API + full-detail (assignments, question responses).","kind":"CSV + API","scripts":10,"lastRun":"2026-06-19","ageDays":2,"qc":"pass","fresh":"fresh"},{"name":"apclassroom","desc":"College Board CSV \u2192 facts + exam timetable.","kind":"CSV","scripts":2,"lastRun":null,"ageDays":null,"qc":"unknown","fresh":"unknown"},{"name":"aphistoryforge","desc":"PostgreSQL \u2192 4 dimensions + 6 fact tables.","kind":"Postgres","scripts":7,"lastRun":"2026-05-01","ageDays":50,"qc":"pass","fresh":"old"},{"name":"crush_ap","desc":"Lesson + XP CSV \u2192 facts.","kind":"CSV / scrape","scripts":7,"lastRun":"2026-06-07","ageDays":14,"qc":"pass","fresh":"fresh"},{"name":"edmentum","desc":"Hybrid: API + usage CSV. mapping \u2192 activity dim \u2192 enrollment \u2192 lesson facts \u2192 QC.","kind":"API + CSV","scripts":12,"lastRun":"2026-05-28","ageDays":23,"qc":"pass","fresh":"stale"},{"name":"egumpp","desc":"Scraper \u2192 attempts \u2192 aggregates \u2192 QC gate \u2192 completion.","kind":"Scraper","scripts":11,"lastRun":"2026-06-09","ageDays":12,"qc":"pass","fresh":"fresh"},{"name":"map","desc":"NWEA MAP scores from Timeback Gradebook.","kind":"REST API","scripts":3,"lastRun":"2026-05-28","ageDays":23,"qc":"pass","fresh":"stale"},{"name":"mathacademy","desc":"API \u2192 mastery facts.","kind":"REST API","scripts":6,"lastRun":"2026-05-28","ageDays":23,"qc":"pass","fresh":"stale"},{"name":"runestone","desc":"Gradebook CSV \u2192 facts.","kind":"CSV / scrape","scripts":6,"lastRun":"2026-06-07","ageDays":14,"qc":"pass","fresh":"fresh"},{"name":"timeback","desc":"OneRoster enrollment dimension + facts.","kind":"REST API","scripts":7,"lastRun":"2026-05-20","ageDays":31,"qc":"pass","fresh":"stale"}];
+/* END DATA */
+
+/* ---------------------------------------------------------------------------
+   All content lives here. Each "band" is a horizontal layer in the data flow.
+   color keys map to the CSS custom-prop families defined in :root.
+--------------------------------------------------------------------------- */
+const LAYERS = [
+  {
+    id: "sources", title: "External Data Sources", tag: "the edges", color: "src",
+    note: "where data enters the system",
+    desc: "The system's boundary. Each platform exposes data a different way — REST APIs, SFTP/manual CSV exports, a Postgres DB, or headless-browser scraping. Nothing here is owned by us; these are the integration points.",
+    cols: 4,
+    cards: [
+      { t: "Edmentum", d: "REST API (OAuth2) for enrollment + identity; usage CSV via FileZilla for attempt detail.", meta: "API + CSV" },
+      { t: "Timeback / OneRoster", d: "Paginated OneRoster API — enrollment, courses, gradebook, MAP scores, daily activity.", meta: "REST API" },
+      { t: "MathAcademy", d: "API pipeline for math mastery progress.", meta: "REST API" },
+      { t: "APHistoryForge", d: "PostgreSQL (read-only) — responses, sessions, mastery, diagnostics.", meta: "Postgres" },
+      { t: "Runestone", d: "Gradebook CSV via headless-browser download.", meta: "CSV / scrape" },
+      { t: "CrushAP", d: "Lesson + XP progress CSV via headless download.", meta: "CSV / scrape" },
+      { t: "EGUMpp", d: "Grammar platform — headless scraper for lessons, attempts, aggregates.", meta: "Scraper" },
+      { t: "AlphaTest", d: "Admin CSV exports + HGM mastery-state API + Clerk-auth full detail.", meta: "CSV + API" },
+      { t: "AP Classroom", d: "College Board CSV exports.", meta: "CSV" },
+      { t: "AlphaRead", d: "Reading platform (via Timeback API client).", meta: "REST API" },
+      { t: "WorkFlowy / Gmail", d: "BrainLift changelog emails parsed into local markdown.", meta: "Email" },
+      { t: "College Board", d: "AP exam orders + official SAT/AP calendar.", meta: "Export" },
+    ],
+  },
+  {
+    id: "ingest", title: "Ingestion — learning_apps/", tag: "per-platform pipelines", color: "ing",
+    note: "fetch → stage → QC → promote",
+    desc: "One folder per platform, each a self-contained pipeline: an api_client / scraper, builder scripts, a staging/ area, daily logs, and an orchestrator (refresh_*.py). Staging auto-promotes to the warehouse on QC pass and is blocked on failure. Cards below are generated from the repo — script counts, last-run dates, and QC status come straight from each pipeline's logs/.",
+    cols: 4,
+    generated: "pipelines",   // cards built at render time from the PIPELINES blob
+  },
+  {
+    id: "warehouse", title: "warehouse/ — Central Hub", tag: "source of truth", color: "hub",
+    note: "config.yaml drives all paths",
+    desc: "The single source of truth. dimensions/ hold reference data (students, courses, lesson_details, mappings, calendar); facts/ hold production fact tables, one folder per platform. utils/ is shared Python (config, io, qc, dedup). Dimension files are read-only; never hardcode paths.",
+    cols: 4,
+    cards: [
+      { t: "dimensions/students", d: "student_alpha_id ← SIS. Built from seed + OneRoster.", meta: "dimension" },
+      { t: "dimensions/courses", d: "Course dim from OneRoster + rule-based enrichment.", meta: "dimension" },
+      { t: "dimensions/lesson_details", d: "Per-platform enrichment: unit / lesson / xp.", meta: "5 platforms" },
+      { t: "dimensions/mapping_tables", d: "Generated identity & course mappings.", meta: "generated" },
+      { t: "dimensions/academic_calendar", d: "Sessions, weeks, SAT/AP event tags.", meta: "dimension" },
+      { t: "dimensions/practice_tests", d: "Question bank + curated practice tests.", meta: "dimension" },
+      { t: "facts/ (15 platforms)", d: "enrollment, lesson, learning_data per source: edmentum, timeback, egumpp, map, aphistoryforge…", meta: "fact tables" },
+      { t: "utils/", d: "config.py · io · qc · dedup. keep_latest vs append_distinct.", meta: "shared lib" },
+    ],
+  },
+  {
+    id: "phases", title: "phases/ — Argus Student Lifecycle", tag: "domain logic", color: "phase",
+    note: "5 lifecycle stages",
+    desc: "Argus models a student's journey as ordered phases. Each consumes warehouse facts and produces phase-specific trackers, predictions, and reports. The AP phase is the most built-out (item → unit → course → exam → HTML).",
+    cols: 5,
+    cards: [
+      { t: "onboard", d: "Placement & diagnostics.", meta: "phase 1", phase: "1" },
+      { t: "mastery / g8_mastery", d: "Subject mastery (AlphaTest, HGM). Mastery signal engine.", meta: "phase 2", phase: "2" },
+      { t: "sat", d: "SAT prep tracking + score reports.", meta: "phase 3", phase: "3" },
+      { t: "ap", d: "AP exam readiness — tracker, practice tests, predictions, HTML dashboard.", meta: "phase 4 · ~26 scripts", phase: "4" },
+      { t: "credits", d: "Credit completion (Edmentum / ELA / mastery views).", meta: "phase 5", phase: "5" },
+    ],
+  },
+  {
+    id: "argus", title: "argus/ — Signal Engine", tag: "cross-phase", color: "phase",
+    note: "cohort signals",
+    desc: "The analytical core behind the phases: turns warehouse facts into a per-student mastery signal (stuck / idle / on-track / advance) and cohort views for the leadership demo.",
+    cols: 4,
+    cards: [
+      { t: "signal/mastery.py", d: "Mastery signal computation — the built core.", meta: "engine" },
+      { t: "scripts/", d: "Cohort placement, view, wide tables, signal runner.", meta: "~6 scripts" },
+      { t: "input / output", d: "Cohort inputs and generated signal outputs.", meta: "data" },
+      { t: "tests/", d: "Signal-engine unit tests.", meta: "pytest" },
+    ],
+  },
+  {
+    id: "consume", title: "Consumption Surfaces", tag: "outputs", color: "out",
+    note: "where data leaves the system",
+    desc: "How humans see the data. A Cloudflare Worker + D1 serves a React SPA and /api/*; hand-authored and pipeline-generated HTML visuals are published to GitHub Pages; a design-token system keeps everything consistent.",
+    cols: 4,
+    cards: [
+      { t: "dashboard/worker", d: "Cloudflare Worker serves SPA + /api/* from D1 (seed_d1 / sync_d1).", meta: "Worker + D1" },
+      { t: "dashboard/frontend", d: "React + Vite + Tailwind v4 SPA. Pages: Home, Roster, MasteryMatrix.", meta: "React SPA" },
+      { t: "ahs-visuals/", d: "Hand-authored standalone HTML (calendar, this map). Published to Pages.", meta: "static HTML" },
+      { t: "pipeline output/", d: "Generated HTML: AP tracker, practice-test gaps, EGUMpp, g8 mastery.", meta: "generated" },
+      { t: "design/ tokens", d: "Single source-of-truth color/type tokens + prototypes.", meta: "design system" },
+      { t: "deploy_visuals.py", d: "Publishes visuals → ahs-monitor-visuals GitHub Pages repo.", meta: "deploy" },
+      { t: "engagement/", d: "Cross-platform daily/weekly engagement reports.", meta: "API-driven" },
+      { t: "brainlifts/", d: "WorkFlowy → local markdown knowledge base + index.", meta: "sync" },
+    ],
+  },
+  {
+    id: "infra", title: "Supporting Infrastructure", tag: "scaffolding", color: "inf",
+    note: "not in the data flow",
+    desc: "Cross-cutting concerns: documentation, ad-hoc analyses, agents/skills, and git-hygiene tooling. The main checkout is a read-only hub — all feature work happens in per-feature worktrees.",
+    cols: 5,
+    cards: [
+      { t: "docs/", d: "API docs, design docs, handover, Argus/Signal specs, references.", meta: "docs" },
+      { t: "discrete_tasks/", d: "One-off analyses: SAT, MAP, coaching, credits, notice rebuttal.", meta: "ad-hoc" },
+      { t: "tasks/", d: "Tracked task specs + task_manager.py.", meta: "planning" },
+      { t: ".claude/ + skills", d: "Agents (argus-pm, scribe), slash-command skills.", meta: "tooling" },
+      { t: "scripts/ (worktrees)", d: "new-worktree.sh / cleanup-worktree.sh git hygiene.", meta: "git ops" },
+      { t: "tests/", d: "Project-level pytest suite.", meta: "pytest" },
+      { t: "meeting_prep / notes", d: "Meeting briefs + working notes.", meta: "misc" },
+      { t: "context / config", d: "active_focus.md, CLAUDE.md, config.yaml, .env.", meta: "config" },
+      { t: "phases/.../docs", d: "Phase-specific documentation & logs.", meta: "docs" },
+      { t: "logs/", d: "Per-pipeline daily run logs.", meta: "logs" },
+    ],
+  },
+];
+
+// Two KPIs are computed from the generated PIPELINES blob so the strip stays
+// honest as pipelines run; the rest are stable architectural facts.
+const _freshN = PIPELINES.filter(p => p.fresh === "fresh" && p.qc !== "fail").length;
+const _failN = PIPELINES.filter(p => p.qc === "fail").length;
+const KPIS = [
+  { num: "12+", lab: "Source platforms" },
+  { num: String(PIPELINES.length || 15), lab: "Ingestion pipelines" },
+  { num: "5", lab: "Lifecycle phases" },
+  { num: `${_freshN}/${PIPELINES.length}`, lab: "Fresh (≤14d)" },
+  { num: _failN ? String(_failN) : "0", lab: "Failing QC" },
+  { num: "CF", lab: "Worker + D1" },
+];
+
+const LEGEND = [
+  { c: "src",   t: "External sources (edges)" },
+  { c: "ing",   t: "Ingestion pipelines" },
+  { c: "hub",   t: "Warehouse (source of truth)" },
+  { c: "phase", t: "Phases / signal engine" },
+  { c: "out",   t: "Consumption surfaces" },
+  { c: "inf",   t: "Supporting infra" },
+];
+
+/* ---- render ---- */
+const fam = (c, prop) => `var(--${c}-${prop})`;
+
+/* Freshness palette — reuses the signal hues. A failing QC run always reads red
+   regardless of recency; otherwise color by how recently the pipeline ran. */
+const FRESH = {
+  fresh:   { c: "#067647", bg: "#ECFDF3", bd: "#ABEFC6", label: "fresh" },
+  stale:   { c: "#B54708", bg: "#FFFAEB", bd: "#FEDF89", label: "stale" },
+  old:     { c: "#B42318", bg: "#FEF3F2", bd: "#FECDCA", label: "old" },
+  unknown: { c: "#6B6B76", bg: "#F2F4F7", bd: "#D0D5DD", label: "no runs" },
+};
+function freshState(p) {            // p: {fresh, qc}
+  if (p.qc === "fail") return "old";
+  return p.fresh || "unknown";
+}
+function freshChip(p) {
+  const st = FRESH[freshState(p)];
+  const failing = p.qc === "fail";
+  const tip = (p.lastRun ? "last run " + p.lastRun : "no dated run found")
+    + (failing ? " · QC FAILED" : p.qc === "pass" ? " · QC passed" : "");
+  const dot = failing ? "✕ " : "";
+  return `<span class="chip" title="${tip}"`
+    + ` style="color:${st.c};background:${st.bg};border-color:${st.bd}">${dot}${st.label}</span>`;
+}
+
+document.getElementById("kpis").innerHTML = KPIS.map(k =>
+  `<div class="kpi"><div class="num">${k.num}</div><div class="lab">${k.lab}</div></div>`
+).join("");
+
+document.getElementById("legend").innerHTML = LEGEND.map(l =>
+  `<div class="item"><span class="swatch" style="background:${fam(l.c,'tint')};border-color:${fam(l.c,'border')}"></span>${l.t}</div>`
+).join("");
+
+const diagram = document.getElementById("diagram");
+LAYERS.forEach((layer, i) => {
+  if (i > 0) {
+    const flow = document.createElement("div");
+    flow.className = "flow";
+    flow.innerHTML = `<span class="arrow">▼</span>`;
+    diagram.appendChild(flow);
+  }
+  const band = document.createElement("div");
+  band.className = "band";
+  band.style.setProperty("--band-accent", fam(layer.color, "fg"));
+  band.style.setProperty("--band-fg", fam(layer.color, "fg"));
+  band.style.setProperty("--band-tint", fam(layer.color, "tint"));
+  band.style.setProperty("--band-border", fam(layer.color, "border"));
+
+  // generated bands build their cards from a data blob; others use layer.cards.
+  const cardData = layer.generated === "pipelines"
+    ? PIPELINES.map(p => ({
+        t: p.name, d: p.desc,
+        meta: p.scripts + " script" + (p.scripts === 1 ? "" : "s"),
+        fresh: p.fresh, qc: p.qc, lastRun: p.lastRun,
+      }))
+    : (layer.cards || []);
+
+  const cards = cardData.map(card => {
+    const phaseN = card.phase ? `<span class="pn">${card.phase}</span>` : "";
+    const dot = `<span class="dot" style="background:${fam(layer.color,'fg')}"></span>`;
+    const meta = card.meta ? `<div class="meta">${card.meta}</div>` : "";
+    const chip = card.fresh ? freshChip(card) : "";
+    return `<div class="card ${card.phase ? 'phasecard' : ''}">${phaseN}
+      <div class="t">${dot}${card.t}${chip}</div>
+      <div class="d">${card.d}</div>${meta}</div>`;
+  }).join("");
+
+  band.innerHTML = `
+    <div class="band-head">
+      <h2>${layer.title}</h2>
+      <span class="tag">${layer.tag}</span>
+      <span class="note">${layer.note}</span>
+    </div>
+    <div class="band-desc">${layer.desc}</div>
+    <div class="cards c${layer.cols}">${cards}</div>`;
+  diagram.appendChild(band);
+});
+
+/* ---------------------------------------------------------------------------
+   Interactive radial directory network.
+
+   TREE (the structure) and PIPELINES (per-pipeline freshness) are both generated
+   from the real repo by ahs-visuals/build_project_map.py and injected at the top
+   of this script — re-run that script when the layout changes or a pipeline runs.
+
+   Behaviour: top two levels show by default; click a ringed node to expand its
+   children (one more ring), click again to collapse. Node area ∝ file count.
+   Hover for a tooltip; the search box highlights matches and dims the rest. The
+   freshness toggle recolors learning_apps nodes by last-run QC status.
+--------------------------------------------------------------------------- */
+const NET = (function () {
+  const W = 1200, H = 1000, cx = W / 2, cy = H / 2;
+  const RING = [0, 175, 320, 440];   // radius by depth
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("net");
+  const tip = document.getElementById("net-tip");
+
+  // expanded holds the full slash-paths whose children are shown.
+  // Default: every depth-1 node is expanded (so depth-2 shows), nothing deeper.
+  const expanded = new Set();
+  const seedDefault = () =>
+    (TREE.children || []).forEach(b => expanded.add(TREE.name + "/" + b.name));
+  seedDefault();
+
+  // pipeline freshness lookup, keyed by learning_apps/<name> path.
+  const pipeMap = new Map(PIPELINES.map(p => ["ahs-monitor-v2/learning_apps/" + p.name, p]));
+  let freshMode = false;   // when true, recolor pipeline nodes by run status
+
+  const mk = (tag, attrs) => {
+    const el = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  };
+  const pipeFor = n => pipeMap.get(n.path);
+  const colorOf = n => {
+    if (freshMode) {
+      const p = pipeFor(n);
+      if (p) return FRESH[freshState(p)].c;   // pipeline node → freshness hue
+      return "var(--warm-300)";               // non-pipeline node → muted in this mode
+    }
+    return n.node.c === "accent" ? "var(--accent)" : fam(n.node.c, "fg");
+  };
+  const hasKids = n => n.children && n.children.length > 0;
+  // node radius from file count: gentle sqrt scale, clamped.
+  const radius = (n, depth) => {
+    if (depth === 0) return 11;
+    const base = Math.sqrt(Math.max(1, n.files || 1));
+    return Math.max(3.2, Math.min(13, 2.2 + base * 0.7));
+  };
+
+  // Build the list of visible nodes + links via angular wedges. Each subtree is
+  // allotted an arc; its visible children recurse within that arc.
+  function layout() {
+    const nodes = [{ node: TREE, x: cx, y: cy, depth: 0, path: TREE.name, ang: 0 }];
+    const links = [];
+    const polar = (r, a) => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    const TWO_PI = Math.PI * 2;
+
+    function place(parent, px, py, a0, a1, depth, parentPath) {
+      const kids = parent.children || [];
+      if (!kids.length) return;
+      // Top-level ring (depth 0 → 1): arc ∝ number of subdirs (with a floor so
+      // childless dirs still get label room), so learning_apps' 12 children get
+      // more breathing space than a 2-child dir — and the 860-file docs archive
+      // doesn't dominate the way raw file-weighting would. Deeper levels weight
+      // each child's arc by sqrt(file count). (Node *radius* always reflects raw
+      // counts, so size and arc tell complementary stories.)
+      const wts = depth === 0
+        ? kids.map(k => Math.max(2, (k.children || []).length))
+        : kids.map(k => Math.sqrt(Math.max(1, k.files || 1)));
+      const wsum = wts.reduce((a, b) => a + b, 0);
+      const pad = depth === 0 ? 0.05 : 0.012;  // arc padding between siblings
+      let cur = a0;
+      kids.forEach((k, i) => {
+        const frac = wts[i] / wsum;
+        const span = (a1 - a0) * frac;
+        const ca0 = cur + span * pad;
+        const ca1 = cur + span * (1 - pad);
+        const mid = (ca0 + ca1) / 2;
+        cur += span;
+        const [kx, ky] = polar(RING[depth + 1], mid);
+        nodes.push({ node: k, x: kx, y: ky, depth: depth + 1, path: parentPath + "/" + k.name, ang: mid });
+        links.push({ x1: px, y1: py, x2: kx, y2: ky, depth: depth + 1 });
+        if (hasKids(k) && expanded.has(parentPath + "/" + k.name)) {
+          place(k, kx, ky, ca0, ca1, depth + 1, parentPath + "/" + k.name);
+        }
+      });
+    }
+    // depth-1 ring spans the full circle; start at top.
+    place(TREE, cx, cy, -Math.PI / 2, -Math.PI / 2 + TWO_PI, 0, TREE.name);
+    return { nodes, links };
+  }
+
+  function render() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const { nodes, links } = layout();
+
+    links.forEach(l => {
+      const mx = (l.x1 + l.x2) / 2 + (cx - (l.x1 + l.x2) / 2) * 0.22;
+      const my = (l.y1 + l.y2) / 2 + (cy - (l.y1 + l.y2) / 2) * 0.22;
+      svg.appendChild(mk("path", { class: "net-link", "data-link": "1",
+        d: `M${l.x1},${l.y1} Q${mx},${my} ${l.x2},${l.y2}` }));
+    });
+
+    nodes.forEach(n => {
+      const expandable = hasKids(n.node) && !expanded.has(n.path) && n.depth >= 1;
+      const cls = ["net-node", n.depth === 0 ? "root" : n.depth === 1 ? "l1" : "l2"];
+      if (expandable) cls.push("expandable");
+      const g = mk("g", { class: cls.join(" "), "data-name": n.node.name.toLowerCase() });
+      const r = radius(n.node, n.depth);
+
+      if (expandable) {  // faint halo signals "click to expand"
+        g.appendChild(mk("circle", { class: "halo", cx: n.x, cy: n.y, r: r + 3.5 }));
+      }
+      const pipe = pipeFor(n);
+      // in freshness mode, ring each pipeline node in its status hue so it pops
+      if (freshMode && pipe) {
+        const st = FRESH[freshState(pipe)];
+        g.appendChild(mk("circle", { cx: n.x, cy: n.y, r: r + 3.5,
+          fill: "none", stroke: st.c, "stroke-width": pipe.qc === "fail" ? 2.5 : 1.5 }));
+      }
+      g.appendChild(mk("circle", { cx: n.x, cy: n.y, r, fill: colorOf(n) }));
+
+      // label only for root, depth-1, and expanded/large nodes to avoid clutter
+      const showLabel = n.depth <= 1 || expanded.has(n.path) || r >= 6;
+      if (showLabel) {
+        const t = mk("text", {});
+        t.textContent = n.node.name;
+        if (n.depth <= 1) {
+          t.setAttribute("x", n.x);
+          t.setAttribute("y", n.y - r - 6);
+          t.setAttribute("text-anchor", "middle");
+        } else {
+          const right = Math.cos(n.ang) >= 0;
+          t.setAttribute("x", n.x + (right ? r + 5 : -(r + 5)));
+          t.setAttribute("y", n.y);
+          t.setAttribute("text-anchor", right ? "start" : "end");
+        }
+        g.appendChild(t);
+      }
+
+      // interactions
+      g.addEventListener("mouseenter", e => showTip(e, n));
+      g.addEventListener("mousemove", moveTip);
+      g.addEventListener("mouseleave", hideTip);
+      if (hasKids(n.node) && n.depth >= 1) {
+        g.addEventListener("click", () => {
+          if (expanded.has(n.path)) collapseSubtree(n.path);
+          else expanded.add(n.path);
+          render();
+          applySearch();
+        });
+      }
+      svg.appendChild(g);
+    });
+  }
+
+  function collapseSubtree(path) {
+    // drop this path and anything beneath it
+    for (const p of Array.from(expanded)) {
+      if (p === path || p.startsWith(path + "/")) expanded.delete(p);
+    }
+  }
+
+  // ---- tooltip ----
+  function showTip(e, n) {
+    const kids = (n.node.children || []).length;
+    const pipe = pipeFor(n);
+    let html = `<div class="tip-name">${n.node.name}</div>`
+      + `<div class="tip-meta">${n.node.files} file${n.node.files === 1 ? "" : "s"}`
+      + (kids ? ` · ${kids} subfolder${kids === 1 ? "" : "s"}` : "")
+      + (hasKids(n.node) && n.depth >= 1 ? (expanded.has(n.path) ? " · click to collapse" : " · click to expand") : "")
+      + `</div>`;
+    if (pipe) {  // pipeline node: add run freshness + QC line
+      const st = FRESH[freshState(pipe)];
+      const run = pipe.lastRun ? "last run " + pipe.lastRun
+        + (pipe.ageDays != null ? ` (${pipe.ageDays}d ago)` : "") : "no dated run found";
+      const qc = pipe.qc === "fail" ? "QC FAILED" : pipe.qc === "pass" ? "QC passed" : "QC unknown";
+      html += `<div class="tip-meta" style="color:${st.c};font-weight:700;margin-top:5px">`
+        + `● ${st.label.toUpperCase()} · ${run} · ${qc}</div>`;
+    }
+    tip.innerHTML = html;
+    tip.hidden = false;
+    moveTip(e);
+  }
+  function moveTip(e) {
+    const pad = 14;
+    let x = e.clientX + pad, y = e.clientY + pad;
+    const r = tip.getBoundingClientRect();
+    if (x + r.width > window.innerWidth) x = e.clientX - r.width - pad;
+    if (y + r.height > window.innerHeight) y = e.clientY - r.height - pad;
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+  function hideTip() { tip.hidden = true; }
+
+  // ---- search ----
+  let query = "";
+  function applySearch() {
+    const q = query.trim().toLowerCase();
+    const groups = svg.querySelectorAll(".net-node");
+    const links = svg.querySelectorAll(".net-link");
+    if (!q) {
+      groups.forEach(g => g.classList.remove("dim", "match"));
+      links.forEach(l => l.classList.remove("dim"));
+      return;
+    }
+    groups.forEach(g => {
+      const hit = (g.getAttribute("data-name") || "").includes(q);
+      g.classList.toggle("match", hit);
+      g.classList.toggle("dim", !hit);
+    });
+    links.forEach(l => l.classList.add("dim"));
+  }
+
+  // ---- controls ----
+  function expandAll() {
+    const walk = (node, path) => {
+      (node.children || []).forEach(k => {
+        const p = path + "/" + k.name;
+        if (hasKids(k)) { expanded.add(p); walk(k, p); }
+      });
+    };
+    walk(TREE, TREE.name);
+    render(); applySearch();
+  }
+  function collapseAll() {
+    expanded.clear();
+    seedDefault();  // back to the default 2 visible levels
+    render(); applySearch();
+  }
+
+  // ---- freshness overlay ----
+  const freshLegend = document.getElementById("net-fresh-legend");
+  function renderFreshLegend() {
+    // count pipelines per state so the legend doubles as a summary
+    const counts = {};
+    PIPELINES.forEach(p => { const s = freshState(p); counts[s] = (counts[s] || 0) + 1; });
+    const order = ["fresh", "stale", "old", "unknown"];
+    freshLegend.innerHTML =
+      `<span class="item" style="color:var(--muted);font-weight:600">Last pipeline run:</span>` +
+      order.filter(s => counts[s]).map(s => {
+        const st = FRESH[s];
+        const tip = s === "fresh" ? `≤${14}d` : s === "stale" ? `≤${45}d` : s === "old" ? `>${45}d or QC failed` : "no dated logs";
+        return `<span class="item"><span class="sw" style="background:${st.c}"></span>`
+          + `${st.label} <span style="color:var(--warm-400)">(${counts[s]} · ${tip})</span></span>`;
+      }).join("");
+  }
+  function toggleFresh() {
+    freshMode = !freshMode;
+    const btn = document.getElementById("net-fresh");
+    btn.setAttribute("aria-pressed", String(freshMode));
+    freshLegend.hidden = !freshMode;
+    if (freshMode) renderFreshLegend();
+    // freshness is about pipelines — auto-expand learning_apps so they're visible
+    if (freshMode) expanded.add(TREE.name + "/learning_apps");
+    render(); applySearch();
+  }
+
+  document.getElementById("net-search").addEventListener("input", e => {
+    query = e.target.value; applySearch();
+  });
+  document.getElementById("net-expand").addEventListener("click", expandAll);
+  document.getElementById("net-collapse").addEventListener("click", collapseAll);
+  document.getElementById("net-fresh").addEventListener("click", toggleFresh);
+
+  if (!TREE.children || !TREE.children.length) {
+    svg.appendChild(mk("text", { x: cx, y: cy, "text-anchor": "middle",
+      fill: "var(--muted)", "font-size": "13" }));
+    svg.lastChild.textContent = "Run: python ahs-visuals/build_project_map.py";
+  } else {
+    render();
+  }
+  return { render };
+})();
+</script>
+</body>
+</html>
